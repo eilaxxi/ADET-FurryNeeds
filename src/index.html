@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html> 
+<head>
+    <meta charset="UTF-8">
+    <title>FurryNeeds - Web Client</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #fce4ec; }
+        .card { background: white; padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 5px solid #f06292; }
+        .status { font-weight: bold; color: #d81b60; }
+    </style>
+</head>
+<body>
+    <h2>FurryNeeds Shop Search</h2>
+    
+    <label>Category ID (1: Food, 2: Med, 3: Access):</label><br>
+    <input type="number" id="catID" value="1"><br><br>
+    
+    <label>Max Price (Pesos):</label><br>
+    <input type="number" id="maxPrice" value="500"><br><br>
+    
+    <button onclick="fetchInventory()">Search Products</button>
+
+    <div id="results"></div>
+
+    <script>
+        async function fetchInventory() {
+            const catId = document.getElementById('catID').value;
+            const price = document.getElementById('maxPrice').value;
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = "Searching...";
+
+            try {
+                // Change 'localhost' to your Server's IP address if using different laptops
+                const response = await fetch(`http://localhost/ADET/service.php?cat_id=${catId}&price=${price}`);
+                const data = await response.json();
+
+                resultsDiv.innerHTML = ""; // Clear "Searching..."
+
+                if (data.message) {
+                    resultsDiv.innerHTML = `<p>${data.message}</p>`;
+                } else {
+                    data.forEach(item => {
+                        resultsDiv.innerHTML += `
+                            <div class = "card">
+                                <strong>${item.product_name}</strong> - ₱ ${item.price}<br>
+                                Status: <span class="status">${item.status}</span>
+                            </div>`;
+                    });
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = "<p style='color:red;'>Error connecting to API. Make sure XAMPP is running!</p>";
+            }
+        }
+    </script>
+</body>
+</html>
