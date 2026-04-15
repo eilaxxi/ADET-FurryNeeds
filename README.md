@@ -1,1 +1,2 @@
-# ADET - FurryNeeds Pet Shop 
+# ADET - FurryNeeds Pet Shop Inventory
+
