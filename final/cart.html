@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - FurryNeeds</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Header */
+        header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .top-bar {
+            background: #FDCA5D;
+            color: white;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        .header-main {
+            padding: 20px 0;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FDCA5D;
+        }
+        /* Progress Steps */
+        .progress-steps {
+            background: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .steps-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .step.active .step-circle {
+            background: #FDCA5D;
+            color: white;
+        }
+        .step.completed .step-circle {
+            background: #4CAF50;
+            color: white;
+        }
+        .step-label {
+            font-weight: 600;
+            color: #999;
+        }
+        .step.active .step-label {
+            color: #FDCA5D;
+        }
+        .step-arrow {
+            color: #e0e0e0;
+            font-size: 20px;
+        }
+        /* Main Content */
+        .cart-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            padding: 20px 0 40px;
+        }
+        .cart-items {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .cart-header h1 {
+            font-size: 28px;
+        }
+        .item-count {
+            color: #666;
+            font-size: 16px;
+        }
+        .cart-item {
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .item-image {
+            width: 120px;
+            height: 120px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        .item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .item-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .item-meta {
+            color: #666;
+            font-size: 14px;
+        }
+        .item-stock {
+            color: #4CAF50;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .item-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .action-link {
+            color: #FDCA5D;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .action-link:hover {
+            text-decoration: underline;
+        }
+        .item-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        .item-price {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .item-price-original {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+        }
+        .item-price-current {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .item-promo {
+            color: #4CAF50;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .qty-controls {
+            display: flex;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .qty-btn {
+            padding: 8px 15px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .qty-btn:hover {
+            background: #f0f0f0;
+        }
+        .qty-display {
+            padding: 8px 20px;
+            border-left: 1px solid #e0e0e0;
+            border-right: 1px solid #e0e0e0;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        .summary-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            font-size: 16px;
+        }
+        .summary-line.total {
+            font-size: 20px;
+            font-weight: bold;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .savings-text {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+        .btn-checkout {
+            width: 100%;
+            padding: 18px;
+            background: #FDCA5D;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .btn-checkout:hover {
+            background: #e6b84d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(253, 202, 93, 0.4);
+        }
+        .continue-shopping {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .continue-shopping a {
+            color: #FDCA5D;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .trust-badges {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .trust-badge {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .trust-badge-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        @media (max-width: 768px) {
+            .cart-content {
+                grid-template-columns: 1fr;
+            }
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+            }
+            .item-right {
+                grid-column: 2;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="top-bar">
+        </div>
+        <div class="header-main">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">FurryNeeds</div>
+                    <div>
+                        <a href="login.html" style="text-decoration: none; color: #FDCA5D; font-weight: 600;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+        <div class="container">
+            <div class="steps-container">
+                <div class="step active">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Cart</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Checkout</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Payment</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Content -->
+    <div class="container">
+        <div class="cart-content">
+            <!-- Cart Items -->
+            <div class="cart-items">
+                <div class="cart-header">
+                    <h1>Shopping Cart</h1>
+                    <div class="item-count">0 items</div>
+                </div>
+
+                <!-- Cart items injected here by cart-page.js -->
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <div class="summary-title">Order Summary</div>
+
+                <div class="summary-line">
+                    <span>Subtotal (<span class="item-count">0 items</span>)</span>
+                    <span id="subtotal">₱0.00</span>
+                </div>
+                <div class="summary-line">
+                    <span>Shipping</span>
+                    <span id="shipping" class="savings-text">₱0.00</span>
+                </div>
+                <div class="summary-line">
+                    <span>Discount</span>
+                    <span class="savings-text" id="discount">-₱0.00</span>
+                </div>
+                <div class="summary-line total">
+                    <span>Total</span>
+                    <span id="total">₱0.00</span>
+                </div>
+
+                <button class="btn-checkout" onclick="window.location.href='checkout.html';" fdprocessedid="7q2ruh">
+                    Proceed to Checkout
+                </button>     
+
+                <div class="continue-shopping">
+                    <a href="product-detail.html">← Continue Shopping</a>
+                </div>
+
+    
+            </div>
+        </div>
+    </div>
+
+    <!-- DB-connected cart logic -->
+    <script src="js/db.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/cart-page.js"></script>
+    <script>
+        // Page-specific overrides can go here
+    </script>
+
+    <br><br>

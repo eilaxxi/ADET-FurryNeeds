@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management - FurryNeeds Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f8f9fa; }
+        .admin-header { background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%); color: white; padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1400px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 28px; font-weight: bold; }
+        .admin-layout { max-width: 1400px; margin: 0 auto; padding: 30px 20px; display: grid; grid-template-columns: 250px 1fr; gap: 30px; }
+        .sidebar { background: white; border-radius: 8px; padding: 20px; height: fit-content; position: sticky; top: 20px; }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 5px; }
+        .sidebar-menu a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: #333; border-radius: 6px; transition: all 0.3s; font-weight: 500; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: #FDCA5D; color: white; }
+        .menu-icon { font-size: 20px; width: 24px; }
+        .main-content { min-height: 500px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .page-title { font-size: 28px; font-weight: bold; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 14px; }
+        .btn-primary { background: #FDCA5D; color: white; }
+        .btn-primary:hover { background: #e6b84d; }
+        .btn-secondary { background: #f0f0f0; color: #333; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 13px; }
+        .content-section { background: white; border-radius: 8px; padding: 25px; margin-bottom: 20px; }
+        .search-filter-bar { display: grid; grid-template-columns: 1fr auto auto; gap: 15px; margin-bottom: 20px; }
+        .search-box { padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 15px; }
+        .filter-select { padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #666; border-bottom: 2px solid #e0e0e0; }
+        .data-table td { padding: 15px 12px; border-bottom: 1px solid #e0e0e0; }
+        .data-table tr:hover { background: #f8f9fa; }
+        .product-info { display: flex; align-items: center; gap: 15px; }
+        .product-thumb { width: 50px; height: 50px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
+        .product-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+        .stock-status { padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .stock-in  { background: #d4edda; color: #155724; }
+        .stock-low { background: #fff3cd; color: #856404; }
+        .stock-out { background: #f8d7da; color: #721c24; }
+        .action-btns { display: flex; gap: 8px; }
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 20px 25px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .close-btn { font-size: 28px; background: none; border: none; cursor: pointer; color: #999; }
+        .modal-body { padding: 25px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; }
+        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 15px; }
+        textarea { min-height: 100px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .toast { position: fixed; bottom: 30px; right: 30px; background: #333; color: white; padding: 14px 22px; border-radius: 8px; font-size: 14px; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .toast.show { opacity: 1; }
+        .toast.success { background: #28a745; }
+        .toast.error   { background: #dc3545; }
+        .loading-row td { text-align: center; color: #999; padding: 40px; }
+        @media (max-width: 768px) {
+            .admin-layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .search-filter-bar { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-header">
+    <div class="header-content">
+        <div class="logo">FurryNeeds Admin</div>
+        <button class="btn btn-secondary" onclick="handleLogout()" style="background:rgba(255,255,255,0.2);color:white;border:1px solid white;">Logout</button>
+    </div>
+</div>
+
+<div class="admin-layout">
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html"><span class="menu-icon"></span> Dashboard</a></li>
+            <li><a href="product-management.html" class="active"><span class="menu-icon"></span> Products</a></li>
+            <li><a href="orders.html"><span class="menu-icon"></span> Orders</a></li>
+            <li><a href="customers.html"><span class="menu-icon"></span> Customers</a></li>
+            <li><a href="sales-reports.html"><span class="menu-icon"></span> Reports</a></li>
+            <li><a href="inventory.html"><span class="menu-icon"></span> Inventory</a></li>
+            <li><a href="settings.html"><span class="menu-icon"></span> Settings</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Product Management</h1>
+            <button class="btn btn-primary" onclick="openModal('add')">+ Add New Product</button>
+        </div>
+
+        <div class="content-section">
+            <div class="search-filter-bar">
+                <input type="text" id="searchBox" class="search-box" placeholder="Search products by name or SKU...">
+                <select id="categoryFilter" class="filter-select">
+                    <option value="">All Categories</option>
+                </select>
+                <select id="stockFilter" class="filter-select">
+                    <option value="">All Stock Status</option>
+                    <option value="In Stock">In Stock</option>
+                    <option value="Low Stock">Low Stock</option>
+                    <option value="Out of Stock">Out of Stock</option>
+                </select>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <tr class="loading-row"><td colspan="6">Loading products…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<!-- Add / Edit Product Modal -->
+<div class="modal" id="productModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Add New Product</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="productForm">
+                <input type="hidden" id="editProductId">
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="fName" placeholder="Enter product name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="fCategory" required>
+                            <option value="">Select category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Promo (optional)</label>
+                        <select id="fPromo">
+                            <option value="">None</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="fDescription" placeholder="Enter product description"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Price (₱) *</label>
+                        <input type="number" id="fPrice" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity *</label>
+                        <input type="number" id="fStock" placeholder="0" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>SKU</label>
+                        <input type="text" id="fSku" placeholder="e.g., DGF-001">
+                    </div>
+                    <div class="form-group">
+                        <label>Low Stock Alert Level</label>
+                        <input type="number" id="fLowStock" placeholder="10" value="10">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" id="fImage" placeholder="images/product.jpg">
+                </div>
+                <div class="form-group">
+                    <label>Ingredients (optional)</label>
+                    <textarea id="fIngredients" placeholder="List ingredients if applicable" style="min-height:70px;"></textarea>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:25px;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;">Save Product</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Update Modal -->
+<div class="modal" id="stockModal">
+    <div class="modal-content" style="max-width:420px;">
+        <div class="modal-header">
+            <h2 class="modal-title">Update Stock</h2>
+            <button class="close-btn" onclick="closeStockModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p id="stockProductName" style="font-weight:600;margin-bottom:16px;"></p>
+            <div class="form-group">
+                <label>Transaction Type</label>
+                <select id="sType">
+                    <option value="Restock">Restock (add stock)</option>
+                    <option value="Adjustment">Adjustment (add/correct)</option>
+                    <option value="Sale">Sale (deduct stock)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Quantity *</label>
+                <input type="number" id="sQty" placeholder="Enter quantity" min="1">
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <input type="text" id="sNotes" placeholder="Optional notes">
+            </div>
+            <div style="display:flex;gap:10px;margin-top:20px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="submitStockUpdate()">Save</button>
+                <button class="btn btn-secondary" onclick="closeStockModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    // ── CONFIG ──────────────────────────────────────────────
+    const API = 'api';  // path to your api folder
+    // ────────────────────────────────────────────────────────
+
+    let allProducts   = [];
+    let categories    = [];
+    let stockTargetId = null;
+
+    // ── INIT ─────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function () {
+        loadCategories();
+        loadPromos();
+        loadProducts();
+
+        document.getElementById('searchBox').addEventListener('input', filterTable);
+        document.getElementById('categoryFilter').addEventListener('change', filterTable);
+        document.getElementById('stockFilter').addEventListener('change', filterTable);
+        document.getElementById('productForm').addEventListener('submit', handleFormSubmit);
+    });
+
+    // ── FETCH HELPERS ─────────────────────────────────────────
+    async function apiFetch(url, options) {
+        const res  = await fetch(url, options);
+        const data = await res.json();
+        return data;
+    }
+
+    // ── LOAD CATEGORIES ───────────────────────────────────────
+    async function loadCategories() {
+        // We get categories from the products endpoint (categories table)
+        const data = await apiFetch(`${API}/products.php`);
+        if (!data.success) return;
+
+        const seen = new Set();
+        categories = [];
+        data.products.forEach(p => {
+            if (!seen.has(p.category_name)) {
+                seen.add(p.category_name);
+                categories.push({ id: p.category_id, name: p.category_name });
+            }
+        });
+
+        // Populate category filter + form dropdown
+        const catFilter = document.getElementById('categoryFilter');
+        const fCat      = document.getElementById('fCategory');
+        categories.forEach(c => {
+            catFilter.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+            fCat.innerHTML      += `<option value="${c.id}">${c.name}</option>`;
+        });
+    }
+
+    // ── LOAD PROMOS ───────────────────────────────────────────
+    async function loadPromos() {
+        // Promos come embedded in product data; we collect distinct ones
+        const data = await apiFetch(`${API}/products.php`);
+        if (!data.success) return;
+        const fPromo = document.getElementById('fPromo');
+        const seen   = new Set();
+        data.products.forEach(p => {
+            if (p.promo_id && !seen.has(p.promo_id)) {
+                seen.add(p.promo_id);
+                fPromo.innerHTML += `<option value="${p.promo_id}">${p.promo_name}</option>`;
+            }
+        });
+    }
+
+    // ── LOAD PRODUCTS ─────────────────────────────────────────
+    async function loadProducts() {
+        const tbody = document.getElementById('productsTableBody');
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="6">Loading…</td></tr>';
+
+        const search   = document.getElementById('searchBox').value;
+        const category = document.getElementById('categoryFilter').value;
+        const stock    = document.getElementById('stockFilter').value;
+
+        let url = `${API}/products.php?`;
+        if (search)   url += `search=${encodeURIComponent(search)}&`;
+        if (stock)    url += `status=${encodeURIComponent(stock)}&`;
+
+        const data = await apiFetch(url);
+        if (!data.success) {
+            tbody.innerHTML = `<tr class="loading-row"><td colspan="6">Failed to load products.</td></tr>`;
+            return;
+        }
+
+        allProducts = data.products;
+
+        // Client-side category filter (API already filters by search/stock)
+        let filtered = allProducts;
+        if (category) filtered = allProducts.filter(p => p.category_name === category);
+
+        renderTable(filtered);
+    }
+
+    function renderTable(products) {
+        const tbody = document.getElementById('productsTableBody');
+        if (!products.length) {
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="6">No products found.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = products.map(p => {
+            const statusClass = p.stock_status === 'In Stock' ? 'stock-in'
+                              : p.stock_status === 'Low Stock' ? 'stock-low' : 'stock-out';
+            const thumb = p.image
+                ? `<img src="${escHtml(p.image)}" alt="" onerror="this.style.display='none';this.parentNode.innerText='📦'">`
+                : '📦';
+            return `
+            <tr>
+                <td>
+                    <div class="product-info">
+                        <div class="product-thumb">${thumb}</div>
+                        <div>
+                            <div style="font-weight:600;">${escHtml(p.product_name)}</div>
+                            <div style="font-size:12px;color:#999;">SKU: ${escHtml(p.sku || '—')}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>${escHtml(p.category_name)}</td>
+                <td>₱${parseFloat(p.price).toFixed(2)}${p.promo_active ? `<br><span style="font-size:11px;color:#28a745;">Sale: ₱${parseFloat(p.final_price).toFixed(2)}</span>` : ''}</td>
+                <td>${p.stock_quantity} units</td>
+                <td><span class="stock-status ${statusClass}">${escHtml(p.stock_status)}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn btn-primary btn-sm" onclick="openModal('edit', ${p.product_id})">Edit</button>
+                        <button class="btn btn-secondary btn-sm" onclick="openStockModal(${p.product_id}, '${escHtml(p.product_name)}', ${p.stock_quantity})">Stock</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.product_id}, '${escHtml(p.product_name)}')">Delete</button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    function filterTable() {
+        loadProducts();
+    }
+
+    // ── ADD / EDIT MODAL ──────────────────────────────────────
+    function openModal(mode, id) {
+        document.getElementById('productModal').classList.add('show');
+        document.getElementById('productForm').reset();
+        document.getElementById('editProductId').value = '';
+
+        if (mode === 'edit' && id) {
+            const p = allProducts.find(x => x.product_id == id);
+            if (!p) return;
+            document.getElementById('modalTitle').textContent       = 'Edit Product';
+            document.getElementById('editProductId').value          = p.product_id;
+            document.getElementById('fName').value                  = p.product_name;
+            document.getElementById('fCategory').value              = p.category_id;
+            document.getElementById('fPromo').value                 = p.promo_id || '';
+            document.getElementById('fDescription').value           = p.description || '';
+            document.getElementById('fPrice').value                 = p.price;
+            document.getElementById('fStock').value                 = p.stock_quantity;
+            document.getElementById('fSku').value                   = p.sku || '';
+            document.getElementById('fLowStock').value              = p.low_stock_level;
+            document.getElementById('fImage').value                 = p.image || '';
+            document.getElementById('fIngredients').value           = p.ingredients || '';
+        } else {
+            document.getElementById('modalTitle').textContent = 'Add New Product';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('productModal').classList.remove('show');
+    }
+
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        const id = document.getElementById('editProductId').value;
+        const payload = {
+            product_name   : document.getElementById('fName').value,
+            category_id    : document.getElementById('fCategory').value,
+            promo_id       : document.getElementById('fPromo').value || null,
+            description    : document.getElementById('fDescription').value,
+            price          : document.getElementById('fPrice').value,
+            stock_quantity : document.getElementById('fStock').value,
+            sku            : document.getElementById('fSku').value,
+            low_stock_level: document.getElementById('fLowStock').value || 10,
+            image          : document.getElementById('fImage').value,
+            ingredients    : document.getElementById('fIngredients').value,
+            is_active      : 1,
+        };
+
+        const action = id ? 'update' : 'add';
+        if (id) payload.product_id = id;
+
+        const data = await apiFetch(`${API}/products.php?action=${action}`, {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify(payload),
+        });
+
+        if (data.success) {
+            showToast(data.message, 'success');
+            closeModal();
+            loadProducts();
+        } else {
+            showToast(data.error || 'Failed to save product.', 'error');
+        }
+    }
+
+    // ── DELETE ────────────────────────────────────────────────
+    async function deleteProduct(id, name) {
+        if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+        const data = await apiFetch(`${API}/products.php?action=delete`, {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify({ product_id: id }),
+        });
+        if (data.success) {
+            showToast('Product removed.', 'success');
+            loadProducts();
+        } else {
+            showToast(data.error || 'Delete failed.', 'error');
+        }
+    }
+
+    // ── STOCK MODAL ───────────────────────────────────────────
+    function openStockModal(id, name, currentStock) {
+        stockTargetId = id;
+        document.getElementById('stockProductName').textContent =
+            `${name} — Current stock: ${currentStock} units`;
+        document.getElementById('sQty').value   = '';
+        document.getElementById('sNotes').value = '';
+        document.getElementById('sType').value  = 'Restock';
+        document.getElementById('stockModal').classList.add('show');
+    }
+
+    function closeStockModal() {
+        document.getElementById('stockModal').classList.remove('show');
+        stockTargetId = null;
+    }
+
+    async function submitStockUpdate() {
+        const qty = parseInt(document.getElementById('sQty').value);
+        if (!qty || qty < 1) { showToast('Enter a valid quantity.', 'error'); return; }
+
+        const payload = {
+            product_id      : stockTargetId,
+            quantity        : qty,
+            transaction_type: document.getElementById('sType').value,
+            notes           : document.getElementById('sNotes').value,
+        };
+
+        // Use the dedicated inventory_transactions endpoint
+        const data = await apiFetch(`${API}/inventory_transactions.php`, {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify(payload),
+        });
+
+        if (data.success) {
+            showToast(`${data.message}`, 'success');
+            closeStockModal();
+            loadProducts();
+        } else {
+            showToast(data.error || 'Stock update failed.', 'error');
+        }
+    }
+
+    // ── UTILS ─────────────────────────────────────────────────
+    function escHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function showToast(msg, type = '') {
+        const t = document.getElementById('toast');
+        t.textContent  = msg;
+        t.className    = `toast show ${type}`;
+        setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    function handleLogout() {
+        if (confirm('Log out?')) window.location.href = 'login.html';
+    }
+</script>
+</body>
+</html>

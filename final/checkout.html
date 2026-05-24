@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - FurryNeeds</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Header */
+        header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .top-bar {
+            background: #FDCA5D;
+            color: white;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        .header-main {
+            padding: 20px 0;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FDCA5D;
+        }
+        /* Progress Steps */
+        .progress-steps {
+            background: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .steps-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .step.active .step-circle {
+            background: #FDCA5D;
+            color: white;
+        }
+        .step.completed .step-circle {
+            background: #4CAF50;
+            color: white;
+        }
+        .step-label {
+            font-weight: 600;
+            color: #999;
+        }
+        .step.active .step-label {
+            color: #FDCA5D;
+        }
+        .step.completed .step-label {
+            color: #4CAF50;
+        }
+        .step-arrow {
+            color: #e0e0e0;
+            font-size: 20px;
+        }
+        /* Main Content */
+        .checkout-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            padding: 20px 0 40px;
+        }
+        .checkout-form {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .form-section {
+            margin-bottom: 40px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #FDCA5D;
+        }
+        .required {
+            color: #e74c3c;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        .error.show {
+            display: block;
+        }
+        input.invalid, select.invalid {
+            border-color: #e74c3c;
+        }
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        .summary-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .summary-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .summary-item-image {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .summary-item-details {
+            flex: 1;
+        }
+        .summary-item-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .summary-item-qty {
+            font-size: 13px;
+            color: #666;
+        }
+        .summary-item-price {
+            font-weight: bold;
+        }
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            font-size: 16px;
+        }
+        .summary-line.total {
+            font-size: 20px;
+            font-weight: bold;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .discount-applied {
+            background: #e8f5e9;
+            border: 1px solid #4CAF50;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .discount-applied .icon { font-size: 20px; }
+        .discount-applied .text { flex: 1; }
+        .discount-applied .code {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .btn-proceed {
+            width: 100%;
+            padding: 18px;
+            background: #FDCA5D;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .btn-proceed:hover {
+            background: #e6b84d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(253, 202, 93, 0.4);
+        }
+        .secure-notice {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .checkout-content { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="top-bar">🔒 Secure Checkout</div>
+        <div class="header-main">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">🐾 FurryNeeds</div>
+                    <div style="color: #666; font-size: 14px;">Need help? Call +63 9 8700-0000</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+        <div class="container">
+            <div class="steps-container">
+                <div class="step completed">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Cart</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step active">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Checkout</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Payment</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Content -->
+    <div class="container">
+        <div class="checkout-content">
+
+            <!-- Checkout Form -->
+            <div class="checkout-form">
+                <form id="checkoutForm" novalidate>
+
+                    <!-- Contact Information -->
+                    <div class="form-section">
+                        <h2 class="section-title">Contact Information</h2>
+                        <div class="form-group">
+                            <label>Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" placeholder="your@email.com">
+                            <div class="error" id="emailError">Please enter a valid email address.</div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Details -->
+                    <div class="form-section">
+                        <h2 class="section-title">Shipping Details</h2>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name <span class="required">*</span></label>
+                                <input type="text" id="firstName" placeholder="Juan">
+                                <div class="error" id="firstNameError">First name is required.</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name <span class="required">*</span></label>
+                                <input type="text" id="lastName" placeholder="Dela Cruz">
+                                <div class="error" id="lastNameError">Last name is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>House No., Street, Barangay <span class="required">*</span></label>
+                            <input type="text" id="address" placeholder="123, Main Street, Barangay">
+                            <div class="error" id="addressError">Address is required.</div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City <span class="required">*</span></label>
+                                <input type="text" id="city" placeholder="Manila">
+                                <div class="error" id="cityError">City is required.</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Province <span class="required">*</span></label>
+                                <select id="province">
+                                    <option value="">Select Province</option>
+                                    <option value="Albay">Albay</option>
+                                    <option value="Camarines Norte">Camarines Norte</option>
+                                    <option value="Camarines Sur">Camarines Sur</option>
+                                    <option value="Catanduanes">Catanduanes</option>
+                                    <option value="Masbate">Masbate</option>
+                                    <option value="Sorsogon">Sorsogon</option>
+                                    <option value="Metro Manila">Metro Manila</option>
+                                    <option value="Cebu">Cebu</option>
+                                    <option value="Davao del Sur">Davao del Sur</option>
+                                    <option value="Iloilo">Iloilo</option>
+                                    <option value="Laguna">Laguna</option>
+                                    <option value="Rizal">Rizal</option>
+                                    <option value="Bulacan">Bulacan</option>
+                                    <option value="Pampanga">Pampanga</option>
+                                    <option value="Batangas">Batangas</option>
+                                    <option value="Cavite">Cavite</option>
+                                    <option value="Quezon">Quezon</option>
+                                </select>
+                                <div class="error" id="provinceError">Please select a province.</div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Postal Code <span class="required">*</span></label>
+                                <input type="text" id="zip" placeholder="4400" maxlength="4">
+                                <div class="error" id="zipError">Enter a valid 4-digit postal code.</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Contact Number <span class="required">*</span></label>
+                                <input type="tel" id="phone" placeholder="+63 9XX XXX XXXX" value="+63 ">
+                                <div class="error" id="phoneError">Enter a valid Philippine mobile number.</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2 class="summary-title">Order Summary</h2>
+
+                <!-- Promo banner injected by script if discount > 0 -->
+                <div class="discount-applied" id="promoBanner" style="display:none;">
+                    <div class="icon">🏷️</div>
+                    <div class="text">
+                        Promo applied! <span class="code" id="promoLabel"></span>
+                        <div style="font-size: 13px; color: #666; margin-top: 2px;" id="promoSavings"></div>
+                    </div>
+                </div>
+
+                <!-- Cart items injected by script -->
+                <div id="summaryItems">
+                    <div style="text-align:center;padding:30px;color:#999;">Loading cart…</div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div class="summary-line">
+                        <span>Subtotal</span>
+                        <span id="summarySubtotal">—</span>
+                    </div>
+                    <div class="summary-line" id="discountLine" style="display:none;">
+                        <span>Discount</span>
+                        <span style="color: #4CAF50; font-weight: 600;" id="summaryDiscount">—</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Shipping</span>
+                        <span id="shipping" style="color: #4CAF50; font-weight: 600;">—</span>
+                    </div>
+                    <div class="summary-line total">
+                        <span>Total</span>
+                        <span id="total">—</span>
+                    </div>
+                </div>
+
+                <button class="btn-proceed" id="proceedBtn">
+                    Proceed to Payment →
+                </button>
+
+                <div class="secure-notice">
+                    🔒 Your information is secure and encrypted
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br><br>
+
+    <!-- Shared helpers + checkout DB logic (must load before inline script) -->
+    <script src="js/main.js"></script>
+    <script src="js/checkout-payment-db.js"></script>
+
+    <script>
+    (function () {
+
+        /* ══════════════════════════════════════════════
+           1. LOAD CART FROM SESSIONSTORAGE
+           Written by cart-page.js → updateSummaryFromItems()
+        ══════════════════════════════════════════════ */
+        const cartItems  = JSON.parse(sessionStorage.getItem('fn_cart_items')  || '[]');
+        const cartTotals = JSON.parse(sessionStorage.getItem('fn_cart_totals') || '{}');
+
+        const fmt = n => '₱' + parseFloat(n || 0).toFixed(2);
+
+        function renderSummary() {
+            const container = document.getElementById('summaryItems');
+
+            if (!cartItems.length) {
+                container.innerHTML = '<div style="text-align:center;padding:30px;color:#999;">Your cart is empty. <a href="dogs.html" style="color:#FDCA5D;font-weight:600;">Shop now →</a></div>';
+                document.getElementById('summarySubtotal').textContent = fmt(0);
+                document.getElementById('shipping').textContent        = fmt(0);
+                document.getElementById('total').textContent           = fmt(0);
+                document.getElementById('proceedBtn').disabled         = true;
+                document.getElementById('proceedBtn').style.opacity    = '0.5';
+                return;
+            }
+
+            // Render each item
+            container.innerHTML = cartItems.map(function (item) {
+                const unitPrice = parseFloat(item.unit_price || 0);
+                const disc      = parseFloat(item.discount_amount || 0);
+                const finalUnit = unitPrice - disc;
+                const qty       = parseInt(item.quantity || 1);
+                const imgTag    = item.image
+                    ? '<img src="' + item.image + '" alt="' + item.product_name + '" style="max-width:50px;max-height:50px;object-fit:contain;">'
+                    : '🐾';
+                return '<div class="summary-item">' +
+                    '<div class="summary-item-image">' + imgTag + '</div>' +
+                    '<div class="summary-item-details">' +
+                        '<div class="summary-item-name">' + item.product_name + '</div>' +
+                        '<div class="summary-item-qty">Qty: ' + qty + ' × ' +
+                            (disc > 0
+                                ? '<s style="color:#bbb;">' + fmt(unitPrice) + '</s> ' + fmt(finalUnit)
+                                : fmt(unitPrice)) +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="summary-item-price">' + fmt(finalUnit * qty) + '</div>' +
+                '</div>';
+            }).join('');
+
+            // Totals
+            const subtotal = cartTotals.subtotal !== undefined ? cartTotals.subtotal : 0;
+            const discount = cartTotals.discount !== undefined ? cartTotals.discount : 0;
+            const shipping = cartTotals.shipping !== undefined ? cartTotals.shipping : 0;
+            const total    = cartTotals.total    !== undefined ? cartTotals.total    : subtotal - discount + shipping;
+
+            document.getElementById('summarySubtotal').textContent = fmt(subtotal);
+            document.getElementById('shipping').textContent        = shipping === 0 ? 'FREE' : fmt(shipping);
+            document.getElementById('total').textContent           = fmt(total);
+
+            // Discount row
+            if (discount > 0) {
+                document.getElementById('summaryDiscount').textContent = '-' + fmt(discount);
+                document.getElementById('discountLine').style.display  = '';
+                // Promo banner
+                document.getElementById('promoBanner').style.display   = '';
+                document.getElementById('promoSavings').textContent    = 'You save ' + fmt(discount);
+            }
+        }
+
+        renderSummary();
+
+        /* ══════════════════════════════════════════════
+           2. VALIDATION HELPERS
+        ══════════════════════════════════════════════ */
+        function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+        function isValidPhone(phone) { return /^(\+63|0)9\d{9}$/.test(phone.replace(/\s/g, '')); }
+        function isValidZip(zip)     { return /^\d{4}$/.test(zip.trim()); }
+
+        function setError(inputId, errorId, show) {
+            const input = document.getElementById(inputId);
+            const error = document.getElementById(errorId);
+            if (!input || !error) return;
+            input.classList.toggle('invalid', show);
+            error.classList.toggle('show', show);
+        }
+
+        // Real-time clear on input
+        ['email','firstName','lastName','address','city','province','zip','phone'].forEach(function (id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function () {
+                el.classList.remove('invalid');
+                const errEl = document.getElementById(id.charAt(0).toUpperCase() + id.slice(1) + 'Error')
+                           || document.getElementById(id + 'Error');
+                if (errEl) errEl.classList.remove('show');
+            });
+        });
+
+        // Phone prefix lock (+63 )
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', function () {
+            if (!this.value.startsWith('+63 ')) {
+                this.value = '+63 ' + this.value.replace(/^\+?63\s?/, '').replace(/^\s+/, '');
+            }
+        });
+        phoneInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Backspace' && this.selectionStart <= 4) e.preventDefault();
+        });
+
+        // ZIP — digits only
+        document.getElementById('zip').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        /* ══════════════════════════════════════════════
+           3. PROCEED TO PAYMENT
+           Validates form → calls placeOrder() from
+           checkout-payment-db.js → saves fn_last_order
+           → redirects to payment.html
+        ══════════════════════════════════════════════ */
+        document.getElementById('proceedBtn').addEventListener('click', function () {
+            const email     = document.getElementById('email').value.trim();
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName  = document.getElementById('lastName').value.trim();
+            const address   = document.getElementById('address').value.trim();
+            const city      = document.getElementById('city').value.trim();
+            const province  = document.getElementById('province').value.trim();
+            const zip       = document.getElementById('zip').value.trim();
+            const phone     = document.getElementById('phone').value.trim();
+
+            let valid = true;
+            if (!email || !isValidEmail(email))  { setError('email',     'emailError',     true); valid = false; } else { setError('email',     'emailError',     false); }
+            if (!firstName)                       { setError('firstName', 'firstNameError', true); valid = false; } else { setError('firstName', 'firstNameError', false); }
+            if (!lastName)                        { setError('lastName',  'lastNameError',  true); valid = false; } else { setError('lastName',  'lastNameError',  false); }
+            if (!address)                         { setError('address',   'addressError',   true); valid = false; } else { setError('address',   'addressError',   false); }
+            if (!city)                            { setError('city',      'cityError',      true); valid = false; } else { setError('city',      'cityError',      false); }
+            if (!province)                        { setError('province',  'provinceError',  true); valid = false; } else { setError('province',  'provinceError',  false); }
+            if (!isValidZip(zip))                 { setError('zip',       'zipError',       true); valid = false; } else { setError('zip',       'zipError',       false); }
+            if (!isValidPhone(phone))             { setError('phone',     'phoneError',     true); valid = false; } else { setError('phone',     'phoneError',     false); }
+            if (!valid) return;
+
+            // Build shipping address string for the DB
+            const fullAddress = address + ', ' + city + ', ' + province + ' ' + zip;
+
+            // Disable button to prevent double-submit
+            const btn = document.getElementById('proceedBtn');
+            btn.disabled    = true;
+            btn.textContent = 'Processing…';
+
+            // Save checkout data to localStorage for payment.html to access
+            const checkoutData = {
+                firstName,
+                lastName,
+                email,
+                phone,
+                address,
+                city,
+                province,
+                state: province,
+                zip,
+                customer_name: firstName + ' ' + lastName
+            };
+            localStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+
+            // Proceed to payment page
+            window.location.href = 'payment.html';
+        });
+
+    })();
+    </script>
+</body>
+</html>

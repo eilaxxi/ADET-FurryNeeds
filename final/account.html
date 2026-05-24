@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - FurryNeeds</title>
+    
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #FDCA5D;
+            --gold-dark: #e6b44a;
+            --gold-light: #fff8e8;
+            --text: #1a1a2e;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --surface: #ffffff;
+            --bg: #f5f6fa;
+            --radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.07);
+            --shadow-md: 0 4px 24px rgba(0,0,0,0.10);
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ── HEADER ── */
+        header { background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 28px; font-weight: bold; color: #FDCA5D; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+        
+        .header-actions { display: flex; gap: 20px; align-items: center; }
+        .icon-btn { background: none; border: none; font-size: 24px; cursor: pointer; position: relative; color: #333; padding: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .icon-btn:hover { color: #FDCA5D; transform: scale(1.1); }
+        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; }
+
+        /* ── ACCOUNT BANNER ── */
+        .account-banner { background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%); padding: 36px 0; }
+        .account-banner-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
+        .avatar-circle { width: 72px; height: 72px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); flex-shrink: 0; }
+        .banner-text h1 { font-size: 26px; font-weight: 800; color: #1a1a2e; margin-bottom: 4px; }
+        .banner-text p { font-size: 14px; color: rgba(26,26,46,0.7); font-weight: 600; }
+
+        /* ── LAYOUT ── */
+        .page-wrapper { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; display: grid; grid-template-columns: 240px 1fr; gap: 24px; }
+
+        /* ── SIDEBAR ── */
+        .sidebar { background: white; border-radius: var(--radius); box-shadow: var(--shadow); height: fit-content; position: sticky; top: 80px; overflow: hidden; }
+        .back-home-btn { display: block; margin: 14px 14px 4px; padding: 10px 14px; background: var(--gold-light); color: var(--gold-dark); border-radius: 8px; font-weight: 700; font-size: 13px; text-decoration: none; transition: all .2s; }
+        .back-home-btn:hover { background: var(--gold); color: white; }
+        .sidebar-nav { list-style: none; padding: 6px 10px 10px; }
+        .sidebar-nav li { margin-bottom: 2px; }
+        .sidebar-nav a { display: flex; align-items: center; padding: 11px 14px; text-decoration: none; color: #555; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all .2s; }
+        .sidebar-nav a:hover { background: var(--gold-light); color: var(--text); }
+        .sidebar-nav a.active { background: var(--gold); color: white; }
+        .logout-link { color: #e53935 !important; }
+        .logout-link:hover { background: #fee2e2 !important; color: #c62828 !important; }
+        .sidebar-divider { height: 1px; background: var(--border); margin: 6px 14px; }
+
+        /* ── MAIN CONTENT ── */
+        .main-panel { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 30px; min-height: 500px; }
+        .section-pane { display: none; }
+        .section-pane.active { display: block; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--border); }
+        .section-title { font-size: 20px; font-weight: 800; color: var(--text); }
+
+        /* ── LOADING STATE ── */
+        .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: var(--text-muted); gap: 12px; }
+        .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── EMPTY STATE ── */
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--text-muted); }
+        .empty-state .empty-icon { font-size: 52px; margin-bottom: 12px; }
+        .empty-state p { font-size: 15px; margin-bottom: 16px; }
+
+        /* ── BUTTONS ── */
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border: 2px solid var(--border); background: white; border-radius: 8px; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-weight: 700; font-size: 14px; color: var(--text); transition: all .2s; }
+        .btn:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-primary { background: var(--gold); color: white; border-color: var(--gold); }
+        .btn-primary:hover { background: var(--gold-dark); border-color: var(--gold-dark); color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 13px; }
+        .btn-danger { border-color: #fee2e2; color: #ef4444; }
+        .btn-danger:hover { background: #fee2e2; border-color: #ef4444; }
+        .btn-ghost { border-color: transparent; background: var(--gold-light); color: var(--text); }
+        .btn-ghost:hover { background: var(--gold); color: white; border-color: var(--gold); }
+
+        /* ── DASHBOARD ── */
+        .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .dash-card { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; }
+        .dash-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-weight: 700; font-size: 14px; color: var(--text); }
+        .dash-card-header a { font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: none; }
+        .dash-card-header a:hover { text-decoration: underline; }
+        .info-row { padding: 7px 0; color: var(--text-muted); font-size: 14px; border-bottom: 1px solid #f5f5f5; display: flex; gap: 6px; }
+        .info-row:last-child { border-bottom: none; }
+        .info-row strong { color: var(--text); min-width: 60px; }
+        .loyalty-bar-wrap { background: #f0f0f0; height: 8px; border-radius: 4px; margin-top: 10px; overflow: hidden; }
+        .loyalty-bar { background: var(--gold); height: 100%; border-radius: 4px; transition: width .6s ease; }
+        .badge-pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; background: #fff3cd; color: #8a6500; }
+
+        /* ── ORDERS ── */
+        .orders-list { display: flex; flex-direction: column; gap: 14px; }
+        .order-card { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color .2s; }
+        .order-card:hover { border-color: var(--gold); }
+        .order-top { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; padding: 16px 20px; background: #fafafa; border-bottom: 1px solid var(--border); }
+        .order-meta-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+        .order-meta-value { font-weight: 800; font-size: 15px; }
+        .order-body { padding: 14px 20px; }
+        .order-items-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .order-item-chip { background: var(--bg); border-radius: 6px; padding: 6px 10px; font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; }
+        .order-item-chip span { color: var(--text-muted); font-weight: 500; }
+        .order-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .status-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .status-Pending    { background: #fff8e8; color: #b45309; }
+        .status-Processing { background: #e8f0fe; color: #1a56c4; }
+        .status-Shipped    { background: #f3e8ff; color: #7c3aed; }
+        .status-Delivered  { background: #e8f5e9; color: #2e7d32; }
+        .status-Out-for-Delivery { background: #dcfce7; color: #15803d; }
+        .status-Cancelled  { background: #fee2e2; color: #c62828; }
+
+
+        /* ── ORDER MODALS / TRACKING ── */
+        .order-modal { max-width: 620px; }
+        .order-modal-wide { max-width: 760px; }
+        .order-detail-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
+        .order-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+        .detail-box { border: 1.5px solid var(--border); border-radius: 10px; padding: 12px; background: #fafafa; }
+        .detail-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+        .detail-value { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; }
+        .items-table { width: 100%; border-collapse: collapse; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+        .items-table th, .items-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); text-align: left; font-size: 13px; }
+        .items-table th { background: #fafafa; font-weight: 800; }
+        .items-table tr:last-child td { border-bottom: none; }
+        .items-table td:nth-child(2), .items-table td:nth-child(3), .items-table td:nth-child(4),
+        .items-table th:nth-child(2), .items-table th:nth-child(3), .items-table th:nth-child(4) { text-align: right; }
+        .summary-box { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 12px; }
+        .summary-row { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .summary-row:last-child { border-bottom: none; font-weight: 900; background: #fafafa; }
+
+        .track-progress { margin-top: 18px; }
+        .progress-step { display: flex; align-items: flex-start; gap: 12px; position: relative; padding-bottom: 22px; }
+        .progress-step::before { content: ""; position: absolute; left: 13px; top: 28px; width: 2px; height: calc(100% - 6px); background: #d1d5db; }
+        .progress-step:last-child::before { display: none; }
+        .progress-dot { width: 28px; height: 28px; border-radius: 50%; background: #d1d5db; color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; flex-shrink: 0; z-index: 1; }
+        .progress-info { flex: 1; display: flex; justify-content: space-between; gap: 10px; }
+        .progress-name { font-size: 14px; font-weight: 800; color: var(--text); }
+        .progress-note { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+        .progress-time { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+        .progress-step.completed .progress-dot,
+        .progress-step.completed::before { background: #16a34a; }
+        .progress-step.active .progress-dot { background: #8b5cf6; }
+        .progress-step.active .progress-name { color: #8b5cf6; }
+        .progress-step.cancelled .progress-dot { background: #ef4444; }
+        .progress-step.cancelled .progress-name { color: #ef4444; }
+        .cancel-warning { text-align: center; padding: 12px 8px 4px; }
+        .cancel-icon { width: 58px; height: 58px; border-radius: 50%; border: 3px solid #f59e0b; color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 900; margin-bottom: 14px; }
+        .cancel-success-icon { border-color: #22c55e; color: #22c55e; }
+
+        /* ── ADDRESSES ── */
+        .addr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+        .addr-card { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px; position: relative; transition: border-color .2s; }
+        .addr-card:hover { border-color: var(--gold); }
+        .addr-card.is-default { border-color: var(--gold); }
+        .default-tag { background: var(--gold); color: white; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+        .addr-line { font-size: 14px; color: var(--text); line-height: 1.7; }
+        .addr-line.muted { color: var(--text-muted); font-size: 13px; }
+        .addr-actions { display: flex; gap: 6px; margin-top: 12px; }
+        .add-addr-card { border: 2px dashed var(--border); border-radius: var(--radius); padding: 30px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all .2s; color: var(--text-muted); font-weight: 700; font-size: 14px; background: none; width: 100%; }
+        .add-addr-card:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-light); }
+        .add-addr-card .add-plus { font-size: 32px; color: var(--gold); }
+
+        /* ── PAYMENT ── */
+        .payment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+        .payment-card { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; }
+        .payment-card.is-default { border-color: var(--gold); }
+        .card-brand { font-size: 28px; margin-bottom: 8px; color: var(--text-muted); }
+        .card-number { font-size: 16px; font-weight: 700; letter-spacing: 2px; margin-bottom: 4px; }
+        .card-name { font-size: 13px; color: var(--text-muted); }
+        .payment-info-note { background: var(--gold-light); border: 1.5px solid #fde68a; border-radius: var(--radius); padding: 16px 20px; font-size: 14px; color: #78540a; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+
+        /* ── SETTINGS ── */
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .settings-section { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 22px; }
+        .settings-section-title { font-size: 15px; font-weight: 800; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; color: var(--text); transition: border-color .2s; }
+        .form-group input:focus { outline: none; border-color: var(--gold); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* ── MODAL ── */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: white; border-radius: 16px; width: 100%; max-width: 480px; box-shadow: var(--shadow-md); overflow: hidden; animation: modalIn .2s ease; }
+        @keyframes modalIn { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px 0; }
+        .modal-title { font-size: 17px; font-weight: 800; }
+        .modal-close { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--text-muted); padding: 4px 8px; border-radius: 6px; }
+        .modal-close:hover { background: var(--bg); }
+        .modal-body { padding: 20px 24px 24px; }
+        .modal-footer { display: flex; gap: 10px; justify-content: flex-end; padding: 0 24px 24px; }
+        .checkbox-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+        .checkbox-row input { width: auto; }
+        .checkbox-row label { margin-bottom: 0; font-weight: 600; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .page-wrapper { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .dash-grid { grid-template-columns: 1fr; }
+            .settings-grid { grid-template-columns: 1fr; }
+            .order-top { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .page-wrapper { padding: 16px 12px 40px; gap: 12px; }
+            .main-panel { padding: 18px; }
+            .order-top { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+    <div class="header-inner">
+        <a href="index.html" class="logo">FurryNeeds</a>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="window.location.href='cart.html'" title="Shopping Cart">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                    <span class="badge">3</span>
+            </button>
+            <button class="icon-btn" onclick="window.location.href='account.html'" title="Account">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ── BANNER ── -->
+<div class="account-banner">
+    <div class="account-banner-inner">
+        <div class="avatar-circle">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#aab0be" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+        <div class="banner-text">
+            <h1 id="bannerName">Welcome back!</h1>
+            <p id="bannerMeta">Loading your account…</p>
+        </div>
+    </div>
+</div>
+
+<!-- ── PAGE ── -->
+<div class="page-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="index.html" class="back-home-btn">← Back to Shop</a>
+        <ul class="sidebar-nav">
+            <li><a href="#" class="active" data-section="dashboard">Dashboard</a></li>
+            <li><a href="#" data-section="orders">My Orders</a></li>
+            <li><a href="#" data-section="addresses">Addresses</a></li>
+            <li><a href="#" data-section="payment">Payment Methods</a></li>
+            <li><a href="#" data-section="settings">Settings</a></li>
+            <div class="sidebar-divider"></div>
+            <li><a href="#" id="logoutBtn" class="logout-link">Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-panel">
+
+        <!-- ── DASHBOARD ── -->
+        <div id="pane-dashboard" class="section-pane active">
+            <div class="section-header">
+                <h2 class="section-title">Account Dashboard</h2>
+            </div>
+            <div class="dash-grid">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        Account Information
+                        <a href="#" onclick="switchSection('settings');return false;">Edit</a>
+                    </div>
+                    <div class="info-row"><strong>Name:</strong> <span id="dash-name">—</span></div>
+                    <div class="info-row"><strong>Email:</strong> <span id="dash-email">—</span></div>
+                    <div class="info-row"><strong>Phone:</strong> <span id="dash-phone">—</span></div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        Default Shipping Address
+                        <a href="#" onclick="switchSection('addresses');return false;">Edit</a>
+                    </div>
+                    <div id="dash-address"><div class="info-row" style="color:var(--text-muted);">No address saved.</div></div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        Recent Orders
+                        <a href="#" onclick="switchSection('orders');return false;">View All →</a>
+                    </div>
+                    <div id="dash-orders"><div class="info-row" style="color:var(--text-muted);">No orders yet.</div></div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-header">Loyalty Rewards</div>
+                    <div class="info-row"><strong>Points:</strong> <span id="dash-points">—</span></div>
+                    <div class="info-row"><strong>Tier:</strong> <span class="badge-pill" id="dash-tier">—</span></div>
+                    <div class="info-row"><strong>Next reward:</strong> <span id="dash-next-reward">—</span></div>
+                    <div class="loyalty-bar-wrap"><div class="loyalty-bar" id="dash-loyalty-bar" style="width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── ORDERS ── -->
+        <div id="pane-orders" class="section-pane">
+            <div class="section-header">
+                <h2 class="section-title">My Orders</h2>
+            </div>
+            <div id="orders-list" class="orders-list">
+                <div class="loading-state"><div class="spinner"></div><p>Loading orders…</p></div>
+            </div>
+        </div>
+
+        <!-- ── ADDRESSES ── -->
+        <div id="pane-addresses" class="section-pane">
+            <div class="section-header">
+                <h2 class="section-title">My Addresses</h2>
+                <button class="btn btn-primary btn-sm" onclick="openAddressModal()">+ Add Address</button>
+            </div>
+            <div id="addresses-list" class="addr-grid"></div>
+        </div>
+
+        <!-- ── PAYMENT ── -->
+        <div id="pane-payment" class="section-pane">
+            <div class="section-header">
+                <h2 class="section-title">Payment Methods</h2>
+            </div>
+            <div class="payment-info-note">
+                <span style="flex-shrink:0;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                        <line x1="12" y1="12" x2="12" y2="16"></line>
+                    </svg>
+                </span>
+                <span>FurryNeeds currently accepts <strong>Cash on Delivery</strong> and <strong>GCash</strong> at checkout. Payment details are managed securely per order — no card data is stored.</span>
+            </div>
+            <div style="margin-top:20px;">
+                <div class="payment-card" style="max-width:320px;">
+                    <div class="card-brand">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                        </svg>
+                    </div>
+                    <div class="card-number">GCash</div>
+                    <div class="card-name">Select at checkout</div>
+                </div>
+                <div class="payment-card" style="max-width:320px;margin-top:14px;">
+                    <div class="card-brand">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
+                            <line x1="12" y1="12" x2="12" y2="16"></line>
+                            <line x1="10" y1="14" x2="14" y2="14"></line>
+                        </svg>
+                    </div>
+                    <div class="card-number">Cash on Delivery</div>
+                    <div class="card-name">Pay when your order arrives</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SETTINGS ── -->
+        <div id="pane-settings" class="section-pane">
+            <div class="section-header">
+                <h2 class="section-title">Account Settings</h2>
+            </div>
+            <div class="settings-grid">
+                <!-- Profile Info -->
+                <div class="settings-section">
+                    <div class="settings-section-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Personal Information
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" id="set-firstName" name="first_name" placeholder="First name">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" id="set-lastName" name="last_name" placeholder="Last name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="set-email" name="email" placeholder="your@email.com" disabled style="background:#f9fafb;cursor:not-allowed;">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="set-phone" name="phone" placeholder="+63 9XX XXX XXXX">
+                    </div>
+                    <button class="btn btn-primary save-profile-btn" id="saveProfileBtn">Save Changes</button>
+                </div>
+                <!-- Change Password -->
+                <div class="settings-section">
+                    <div class="settings-section-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Change Password
+                    </div>
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="set-currentPw" placeholder="Enter current password">
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="set-newPw" placeholder="At least 8 characters">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="set-confirmPw" placeholder="Repeat new password">
+                    </div>
+                    <button class="btn btn-primary" id="changePasswordBtn">Update Password</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+
+<!-- ── ORDER TRACK MODAL ── -->
+<div class="modal-overlay" id="trackOrderModal">
+    <div class="modal order-modal">
+        <div class="modal-header">
+            <span class="modal-title">Track Order</span>
+            <button class="modal-close" onclick="closeOrderModal('trackOrderModal')">✕</button>
+        </div>
+        <div class="modal-body" id="trackOrderBody"></div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeOrderModal('trackOrderModal')">Back to Orders</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── ORDER DETAILS MODAL ── -->
+<div class="modal-overlay" id="orderDetailsModal">
+    <div class="modal order-modal-wide">
+        <div class="modal-header">
+            <span class="modal-title">View Details</span>
+            <button class="modal-close" onclick="closeOrderModal('orderDetailsModal')">✕</button>
+        </div>
+        <div class="modal-body" id="orderDetailsBody"></div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="detailsTrackBtn">Track Order</button>
+            <button class="btn" onclick="closeOrderModal('orderDetailsModal')">Back to Orders</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── CANCEL ORDER CONFIRM MODAL ── -->
+<div class="modal-overlay" id="cancelOrderModal">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title">Cancel Order</span>
+            <button class="modal-close" onclick="closeOrderModal('cancelOrderModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="cancel-warning">
+                <div class="cancel-icon">!</div>
+                <p style="font-weight:700;line-height:1.5;">Are you sure you want to cancel this order?<br>This action cannot be undone.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeOrderModal('cancelOrderModal')">No, Go Back</button>
+            <button class="btn btn-primary" style="background:#ef4444;border-color:#ef4444;" id="confirmCancelBtn">Yes, Cancel Order</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── CANCEL SUCCESS MODAL ── -->
+<div class="modal-overlay" id="cancelSuccessModal">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title">Cancel Order</span>
+            <button class="modal-close" onclick="closeOrderModal('cancelSuccessModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="cancel-warning">
+                <div class="cancel-icon cancel-success-icon">✓</div>
+                <p style="font-weight:700;">Your order has been cancelled.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="closeOrderModal('cancelSuccessModal')">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── ADDRESS MODAL ── -->
+<div class="modal-overlay" id="addressModal">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title" id="addrModalTitle">Add New Address</span>
+            <button class="modal-close" onclick="closeAddressModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="addr-id">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Street / House No.</label>
+                    <input type="text" id="addr-street" placeholder="e.g. 123 Rizal St.">
+                </div>
+                <div class="form-group">
+                    <label>Barangay</label>
+                    <input type="text" id="addr-barangay" placeholder="Barangay">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>City / Municipality</label>
+                    <input type="text" id="addr-city" placeholder="City">
+                </div>
+                <div class="form-group">
+                    <label>Province</label>
+                    <input type="text" id="addr-province" placeholder="Province">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>ZIP Code</label>
+                    <input type="text" id="addr-zip" placeholder="ZIP">
+                </div>
+                <div class="form-group">
+                    <label>Contact Phone</label>
+                    <input type="tel" id="addr-phone" placeholder="+63 9XX XXX XXXX">
+                </div>
+            </div>
+            <div class="checkbox-row">
+                <input type="checkbox" id="addr-default">
+                <label for="addr-default">Set as default address</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeAddressModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveAddress()">Save Address</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/db.js"></script>
+<script src="js/account-db.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════
+   SECTION NAVIGATION
+═══════════════════════════════════════════════════════ */
+function switchSection(sectionId) {
+    document.querySelectorAll('.section-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-nav a[data-section]').forEach(a => a.classList.remove('active'));
+    const pane = document.getElementById('pane-' + sectionId);
+    if (pane) pane.classList.add('active');
+    const link = document.querySelector(`.sidebar-nav a[data-section="${sectionId}"]`);
+    if (link) link.classList.add('active');
+    // Lazy-load sections on first visit
+    if (sectionId === 'orders' && !window._ordersLoaded) { loadOrders(); window._ordersLoaded = true; }
+    if (sectionId === 'addresses') { renderAddresses(); }
+}
+
+document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        switchSection(link.dataset.section);
+    });
+});
+
+document.getElementById('logoutBtn').addEventListener('click', e => {
+    e.preventDefault();
+    handleLogout();
+});
+
+/* ═══════════════════════════════════════════════════════
+   PROFILE / DASHBOARD
+═══════════════════════════════════════════════════════ */
+let _userData = null;
+let _ordersData = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const userId = getUserId();
+    if (!userId) {
+        showToast('Please log in to view your account.', 'warning');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+        return;
+    }
+    await loadAccountData(userId);
+    // Auto-switch to Orders tab if user just placed an order
+    const lastOrder = sessionStorage.getItem('fn_last_order') || localStorage.getItem('fn_last_order');
+    if (lastOrder) {
+        switchSection('orders');
+        // Clear the flag so it doesn't auto-switch again on next visit
+        localStorage.removeItem('fn_last_order');
+    }
+});
+
+async function loadAccountData(userId) {
+    const res = await apiGet(API.account, { action: 'profile', user_id: userId });
+    if (!res.success) { showToast('Failed to load profile.', 'error'); return; }
+    _userData = res.user;
+    renderBanner(_userData);
+    renderDashboardProfile(_userData);
+    renderDashboardAddress(_userData.addresses || []);
+    populateSettings(_userData);
+    window._addrData = _userData.addresses || [];
+    renderAddresses();
+    // Also load orders for dashboard preview
+    const ordRes = await apiGet(API.orders, { user_id: userId });
+    if (ordRes.success) {
+        _ordersData = ordRes.orders || [];
+        renderDashboardOrders(_ordersData);
+        window._ordersLoaded = true; // mark so clicking orders tab renders immediately
+        renderOrdersPane(_ordersData);
+    }
+}
+
+function renderBanner(u) {
+    const firstName = u.first_name || (u.full_name ? u.full_name.split(' ')[0] : 'there');
+    document.getElementById('bannerName').textContent = `Welcome back, ${firstName}!`;
+    const joined = u.date_created ? new Date(u.date_created).getFullYear() : '—';
+    document.getElementById('bannerMeta').textContent = `Member since ${joined}`;
+}
+
+function renderDashboardProfile(u) {
+    const name = `${u.first_name || ''} ${u.last_name || ''}`.trim() || '—';
+    document.getElementById('dash-name').textContent = name;
+    document.getElementById('dash-email').textContent = u.email || '—';
+    document.getElementById('dash-phone').textContent = u.phone_num || '—';
+    // Loyalty (mock tiers on order count)
+    const pts = _ordersData.length * 250;
+    document.getElementById('dash-points').textContent = pts.toLocaleString();
+    const tier = pts >= 2000 ? 'Gold' : pts >= 500 ? 'Silver' : 'Bronze';
+    const nextPts = pts >= 2000 ? 5000 : pts >= 500 ? 2000 : 500;
+    document.getElementById('dash-tier').textContent = `${tier} Member`;
+    document.getElementById('dash-next-reward').textContent = `₱20 off at ${nextPts.toLocaleString()} pts`;
+    document.getElementById('dash-loyalty-bar').style.width = Math.min((pts / nextPts) * 100, 100) + '%';
+}
+
+function renderDashboardAddress(addresses) {
+    const def = addresses.find(a => a.is_default) || addresses[0];
+    const el = document.getElementById('dash-address');
+    if (!def) { el.innerHTML = '<div class="info-row" style="color:var(--text-muted);">No saved address. <a href="#" onclick="switchSection(\'addresses\');return false;" style="color:var(--gold);">Add one →</a></div>'; return; }
+    el.innerHTML = `
+        <div class="info-row">${def.street}${def.barangay ? ', ' + def.barangay : ''}</div>
+        <div class="info-row">${def.city}, ${def.province} ${def.zip_code || ''}</div>
+        ${def.phone ? `<div class="info-row">${def.phone}</div>` : ''}
+    `;
+}
+
+function renderDashboardOrders(orders) {
+    const el = document.getElementById('dash-orders');
+    if (!orders.length) { el.innerHTML = '<div class="info-row" style="color:var(--text-muted);">No orders yet.</div>'; return; }
+    const statusIcon = { Pending:'', Processing:'', Shipped:'', Delivered:'', Cancelled:'' };
+    el.innerHTML = orders.slice(0, 3).map(o =>
+        `<div class="info-row">Order #${o.order_id} — <span style="font-weight:700;color:var(--text);">₱${parseFloat(o.final_amount).toFixed(2)}</span></div>`
+    ).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   ORDERS PANE
+═══════════════════════════════════════════════════════ */
+function loadOrders() {
+    // Already loaded with profile — just render
+    renderOrdersPane(_ordersData);
+}
+
+function renderOrdersPane(orders) {
+    const container = document.getElementById('orders-list');
+    if (!orders.length) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg></div><p>No orders found.</p><a href="index.html" class="btn btn-primary">Shop Now</a></div>`;
+        return;
+    }
+    container.innerHTML = orders.map(o => {
+        const status = o.order_status || 'Pending';
+        const statusClass = 'status-' + normalizeStatus(status);
+        const items = (o.items || []).map(i =>
+            `<div class="order-item-chip">${escapeHtml(i.product_name || 'Product')} <span>×${i.quantity || 1}</span></div>`
+        ).join('');
+        const date = o.order_date ? o.order_date.substring(0, 10) : '—';
+        const canCancel = ['Pending', 'Processing'].includes(status);
+        const canTrack = ['Pending','Processing','Shipped','Out for Delivery','Delivered'].includes(status);
+        return `
+        <div class="order-card" id="order-card-${o.order_id}">
+            <div class="order-top">
+                <div><div class="order-meta-label">Order</div><div class="order-meta-value">#${o.order_id}</div></div>
+                <div><div class="order-meta-label">Date</div><div class="order-meta-value">${date}</div></div>
+                <div><div class="order-meta-label">Total</div><div class="order-meta-value">₱${formatMoney(o.final_amount)}</div></div>
+                <div><div class="order-meta-label">Status</div><div class="order-meta-value"><span class="status-pill ${statusClass}">${status}</span></div></div>
+            </div>
+            <div class="order-body">
+                <div class="order-items-row">${items || '<span style="color:var(--text-muted);font-size:13px;">No items</span>'}</div>
+                <div class="order-actions">
+                    ${status === 'Delivered' ? `<button class="btn btn-sm btn-ghost">Write Review</button>` : ''}
+                    ${canTrack ? `<button class="btn btn-sm btn-primary" onclick="openTrackOrder(${o.order_id})">Track Order</button>` : ''}
+                    <button class="btn btn-sm" onclick="openOrderDetails(${o.order_id})">View Details</button>
+                    ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="openCancelOrder(${o.order_id})">Cancel Order</button>` : ''}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function normalizeStatus(status) {
+    return String(status || 'Pending').replace(/\s+/g, '-');
+}
+
+function formatMoney(value) {
+    const amount = Number.parseFloat(value || 0);
+    return Number.isFinite(amount) ? amount.toFixed(2) : '0.00';
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    }[ch]));
+}
+
+function findOrder(orderId) {
+    return _ordersData.find(o => String(o.order_id) === String(orderId));
+}
+
+function closeOrderModal(id) {
+    document.getElementById(id)?.classList.remove('open');
+}
+
+function openOrderModal(id) {
+    document.getElementById(id)?.classList.add('open');
+}
+
+function getDefaultAddressText() {
+    const addresses = window._addrData || [];
+    const def = addresses.find(a => a.is_default) || addresses[0];
+    if (!def) return 'No delivery address saved.';
+    return `${def.street || ''}${def.barangay ? ', ' + def.barangay : ''}<br>${def.city || ''}, ${def.province || ''} ${def.zip_code || ''}`;
+}
+
+function openTrackOrder(orderId) {
+    const o = findOrder(orderId);
+    if (!o) return showToast('Order not found.', 'error');
+
+    const status = o.order_status || 'Pending';
+    const date = o.order_date ? o.order_date.substring(0, 10) : '—';
+    const paymentMethod = o.payment_method || o.payment || 'Cash on Delivery';
+    const paymentStatus = o.payment_status || (paymentMethod === 'Cash on Delivery' ? 'Unpaid' : 'Paid');
+    const estimatedDelivery = o.estimated_delivery || getEstimatedDelivery(date);
+    const steps = ['Pending', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
+    const currentIndex = steps.indexOf(status);
+
+    let progressHtml = '';
+    if (status === 'Cancelled') {
+        progressHtml = `
+            <div class="progress-step cancelled">
+                <div class="progress-dot">✕</div>
+                <div class="progress-info">
+                    <div><div class="progress-name">Order Cancelled</div><div class="progress-note">This order was cancelled.</div></div>
+                </div>
+            </div>`;
+    } else {
+        progressHtml = steps.map((step, index) => {
+            const completed = index < currentIndex;
+            const active = index === currentIndex;
+            const pending = index > currentIndex || currentIndex === -1;
+            const mark = completed ? '✓' : '';
+            return `
+                <div class="progress-step ${completed ? 'completed' : ''} ${active ? 'active' : ''}">
+                    <div class="progress-dot">${mark}</div>
+                    <div class="progress-info">
+                        <div>
+                            <div class="progress-name">${step}</div>
+                            <div class="progress-note">${active ? 'Current status' : completed ? 'Completed' : 'Waiting'}</div>
+                        </div>
+                        <div class="progress-time">${pending ? '—' : date}</div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    document.getElementById('trackOrderBody').innerHTML = `
+        <div class="order-detail-head">
+            <h3>Order #${o.order_id}</h3>
+            <span class="status-pill status-${normalizeStatus(status)}">${status}</span>
+        </div>
+        <div class="order-detail-grid">
+            <div class="detail-box"><div class="detail-label">Order Date</div><div class="detail-value">${date}</div></div>
+            <div class="detail-box"><div class="detail-label">Estimated Delivery</div><div class="detail-value">${estimatedDelivery}</div></div>
+            <div class="detail-box"><div class="detail-label">Payment Method</div><div class="detail-value">${escapeHtml(paymentMethod)}</div></div>
+            <div class="detail-box"><div class="detail-label">Payment Status</div><div class="detail-value">${escapeHtml(paymentStatus)}</div></div>
+        </div>
+        <div class="detail-box">
+            <div class="detail-label">Delivery Address</div>
+            <div class="detail-value">${getDefaultAddressText()}</div>
+        </div>
+        <div class="track-progress">
+            <h3 style="margin-bottom:14px;">Order Progress</h3>
+            ${progressHtml}
+        </div>
+    `;
+    openOrderModal('trackOrderModal');
+}
+
+function openOrderDetails(orderId) {
+    const o = findOrder(orderId);
+    if (!o) return showToast('Order not found.', 'error');
+
+    const status = o.order_status || 'Pending';
+    const date = o.order_date ? o.order_date.substring(0, 10) : '—';
+    const items = o.items || [];
+    const subtotal = items.reduce((sum, i) => sum + (Number(i.unit_price || i.price || 0) * Number(i.quantity || 1)), 0);
+    const deliveryFee = Number(o.delivery_fee || 0);
+    const discount = Number(o.discount || 0);
+    const total = Number(o.final_amount || subtotal + deliveryFee - discount);
+    const paymentMethod = o.payment_method || o.payment || 'Cash on Delivery';
+    const paymentStatus = o.payment_status || (paymentMethod === 'Cash on Delivery' ? 'Unpaid' : 'Paid');
+
+    const itemRows = items.length ? items.map(i => {
+        const qty = Number(i.quantity || 1);
+        const price = Number(i.unit_price || i.price || 0);
+        return `
+            <tr>
+                <td>${escapeHtml(i.product_name || 'Product')}</td>
+                <td>${qty}</td>
+                <td>₱${formatMoney(price)}</td>
+                <td>₱${formatMoney(price * qty)}</td>
+            </tr>`;
+    }).join('') : `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No items found</td></tr>`;
+
+    document.getElementById('orderDetailsBody').innerHTML = `
+        <div class="order-detail-head">
+            <h3>Order #${o.order_id} Details</h3>
+            <span class="status-pill status-${normalizeStatus(status)}">${status}</span>
+        </div>
+        <div style="margin-bottom:12px;font-size:14px;"><strong>Order Date:</strong> ${date}</div>
+        <table class="items-table">
+            <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr></thead>
+            <tbody>${itemRows}</tbody>
+        </table>
+        <div class="summary-box">
+            <div class="summary-row"><span>Subtotal</span><span>₱${formatMoney(subtotal || total)}</span></div>
+            <div class="summary-row"><span>Delivery Fee</span><span>₱${formatMoney(deliveryFee)}</span></div>
+            <div class="summary-row"><span>Discount</span><span>₱${formatMoney(discount)}</span></div>
+            <div class="summary-row"><span>Total</span><span>₱${formatMoney(total)}</span></div>
+        </div>
+        <div class="order-detail-grid" style="margin-top:14px;">
+            <div class="detail-box"><div class="detail-label">Payment Method</div><div class="detail-value">${escapeHtml(paymentMethod)}</div></div>
+            <div class="detail-box"><div class="detail-label">Payment Status</div><div class="detail-value">${escapeHtml(paymentStatus)}</div></div>
+        </div>
+        <div class="detail-box"><div class="detail-label">Delivery Address</div><div class="detail-value">${getDefaultAddressText()}</div></div>
+    `;
+
+    const detailsTrackBtn = document.getElementById('detailsTrackBtn');
+    detailsTrackBtn.onclick = () => {
+        closeOrderModal('orderDetailsModal');
+        openTrackOrder(orderId);
+    };
+    detailsTrackBtn.style.display = status === 'Cancelled' ? 'none' : 'inline-flex';
+    openOrderModal('orderDetailsModal');
+}
+
+let _cancelOrderId = null;
+
+function openCancelOrder(orderId) {
+    const o = findOrder(orderId);
+    if (!o) return showToast('Order not found.', 'error');
+    if (!['Pending', 'Processing'].includes(o.order_status || 'Pending')) {
+        showToast('This order can no longer be cancelled.', 'warning');
+        return;
+    }
+    _cancelOrderId = orderId;
+    openOrderModal('cancelOrderModal');
+}
+
+document.getElementById('confirmCancelBtn')?.addEventListener('click', async () => {
+    if (!_cancelOrderId) return;
+    const orderId = _cancelOrderId;
+    const userId = getUserId();
+    const btn = document.getElementById('confirmCancelBtn');
+    btn.disabled = true;
+    btn.textContent = 'Cancelling...';
+
+    let savedToDatabase = false;
+    try {
+        if (typeof apiPost === 'function' && typeof API !== 'undefined' && API.orders) {
+            const res = await apiPost(API.orders, 'update_status', { order_id: orderId, order_status: 'Cancelled' });
+            savedToDatabase = !!res.success;
+            if (!res.success && res.error) console.warn(res.error);
+        }
+    } catch (err) {
+        console.warn('Cancel order API error:', err);
+    }
+
+    const order = findOrder(orderId);
+    if (order) order.order_status = 'Cancelled';
+    renderOrdersPane(_ordersData);
+    renderDashboardOrders(_ordersData);
+    closeOrderModal('cancelOrderModal');
+    openOrderModal('cancelSuccessModal');
+
+    if (savedToDatabase) showToast('Order cancelled successfully.', 'success');
+    else showToast('Order cancelled locally. Database update failed.', 'error');
+
+    _cancelOrderId = null;
+    btn.disabled = false;
+    btn.textContent = 'Yes, Cancel Order';
+});
+
+function getEstimatedDelivery(dateText) {
+    if (!dateText || dateText === '—') return '—';
+    const d = new Date(dateText);
+    if (Number.isNaN(d.getTime())) return '—';
+    d.setDate(d.getDate() + 2);
+    return d.toISOString().substring(0, 10);
+}
+
+// Close order modals when clicking outside the modal box
+['trackOrderModal', 'orderDetailsModal', 'cancelOrderModal', 'cancelSuccessModal'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', function(e) {
+        if (e.target === this) closeOrderModal(id);
+    });
+});
+
+/* ═══════════════════════════════════════════════════════
+   ADDRESSES PANE
+═══════════════════════════════════════════════════════ */
+function renderAddresses() {
+    const addresses = window._addrData || [];
+    const container = document.getElementById('addresses-list');
+    if (!container) return;
+    let html = addresses.map(a => `
+        <div class="addr-card ${a.is_default ? 'is-default' : ''}">
+            ${a.is_default ? '<span class="default-tag">Default</span>' : ''}
+            <div class="addr-line">${a.street}${a.barangay ? ', ' + a.barangay : ''}</div>
+            <div class="addr-line">${a.city}, ${a.province} ${a.zip_code || ''}</div>
+            ${a.phone ? `<div class="addr-line muted">${a.phone}</div>` : ''}
+            <div class="addr-actions">
+                <button class="btn btn-sm" onclick="openAddressModal(${JSON.stringify(a).replace(/"/g,'&quot;')})">Edit</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteAddress(${a.address_id})">Remove</button>
+            </div>
+        </div>
+    `).join('');
+    html += `<button class="add-addr-card" onclick="openAddressModal()"><span class="add-plus">+</span>Add New Address</button>`;
+    container.innerHTML = html;
+}
+
+function openAddressModal(addr) {
+    document.getElementById('addr-id').value = addr ? addr.address_id : '';
+    document.getElementById('addr-street').value = addr ? addr.street || '' : '';
+    document.getElementById('addr-barangay').value = addr ? addr.barangay || '' : '';
+    document.getElementById('addr-city').value = addr ? addr.city || '' : '';
+    document.getElementById('addr-province').value = addr ? addr.province || '' : '';
+    document.getElementById('addr-zip').value = addr ? addr.zip_code || '' : '';
+    document.getElementById('addr-phone').value = addr ? addr.phone || '' : '';
+    document.getElementById('addr-default').checked = addr ? !!addr.is_default : false;
+    document.getElementById('addrModalTitle').textContent = addr ? 'Edit Address' : 'Add New Address';
+    document.getElementById('addressModal').classList.add('open');
+}
+
+function closeAddressModal() { document.getElementById('addressModal').classList.remove('open'); }
+
+async function saveAddress() {
+    const userId = getUserId();
+    const street = document.getElementById('addr-street').value.trim();
+    const city = document.getElementById('addr-city').value.trim();
+    const province = document.getElementById('addr-province').value.trim();
+    if (!street || !city || !province) { showToast('Street, city and province are required.', 'warning'); return; }
+    const payload = {
+        user_id: userId,
+        address_id: document.getElementById('addr-id').value || undefined,
+        street,
+        barangay: document.getElementById('addr-barangay').value.trim(),
+        city,
+        province,
+        zip_code: document.getElementById('addr-zip').value.trim(),
+        phone: document.getElementById('addr-phone').value.trim(),
+        is_default: document.getElementById('addr-default').checked ? 1 : 0,
+    };
+    const res = await apiPost(API.account, 'save_address', payload);
+    if (res.success) {
+        showToast('Address saved!', 'success');
+        closeAddressModal();
+        await reloadAddresses(userId);
+    } else { showToast(res.error || 'Failed to save address.', 'error'); }
+}
+
+async function deleteAddress(addressId) {
+    if (!confirm('Remove this address?')) return;
+    const userId = getUserId();
+    const res = await apiPost(API.account, 'delete_address', { user_id: userId, address_id: addressId });
+    if (res.success) { showToast('Address removed.', 'success'); await reloadAddresses(userId); }
+    else showToast(res.error || 'Failed.', 'error');
+}
+
+async function reloadAddresses(userId) {
+    const res = await apiGet(API.account, { action: 'profile', user_id: userId });
+    if (res.success) {
+        window._addrData = res.user.addresses || [];
+        renderAddresses();
+        renderDashboardAddress(window._addrData);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SETTINGS PANE
+═══════════════════════════════════════════════════════ */
+function populateSettings(u) {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+    set('set-firstName', u.first_name);
+    set('set-lastName', u.last_name);
+    set('set-email', u.email);
+    set('set-phone', u.phone_num);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Save profile
+    document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
+        const userId = getUserId();
+        const first_name = document.getElementById('set-firstName')?.value.trim();
+        const last_name  = document.getElementById('set-lastName')?.value.trim();
+        const phone_num  = document.getElementById('set-phone')?.value.trim();
+        if (!first_name || !last_name) { showToast('First and last name are required.', 'warning'); return; }
+        const res = await apiPost(API.account, 'update_profile', { user_id: userId, first_name, last_name, phone_num });
+        if (res.success) {
+            showToast('Profile updated!', 'success');
+            const session = getSession();
+            if (session) { session.name = `${first_name} ${last_name}`; setSession(session); }
+            document.getElementById('bannerName').textContent = `Welcome back, ${first_name}!`;
+            document.getElementById('dash-name').textContent = `${first_name} ${last_name}`;
+            document.getElementById('dash-phone').textContent = phone_num || '—';
+        } else showToast(res.error || 'Update failed.', 'error');
+    });
+
+    // Change password
+    document.getElementById('changePasswordBtn')?.addEventListener('click', async () => {
+        const userId  = getUserId();
+        const old_pass = document.getElementById('set-currentPw')?.value;
+        const new_pass = document.getElementById('set-newPw')?.value;
+        const confirm  = document.getElementById('set-confirmPw')?.value;
+        if (!old_pass || !new_pass) { showToast('Please fill all password fields.', 'warning'); return; }
+        if (new_pass !== confirm) { showToast("Passwords don't match.", 'error'); return; }
+        if (new_pass.length < 8) { showToast('Password must be at least 8 characters.', 'warning'); return; }
+        const res = await apiPost(API.account, 'change_password', { user_id: userId, old_password: old_pass, new_password: new_pass });
+        if (res.success) {
+            showToast('Password changed!', 'success');
+            document.getElementById('set-currentPw').value = '';
+            document.getElementById('set-newPw').value = '';
+            document.getElementById('set-confirmPw').value = '';
+        } else showToast(res.error || 'Failed.', 'error');
+    });
+});
+
+// Close modal on overlay click
+document.getElementById('addressModal').addEventListener('click', function(e) {
+    if (e.target === this) closeAddressModal();
+});
+</script>
+</body>
+</html>

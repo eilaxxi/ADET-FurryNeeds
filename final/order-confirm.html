@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - FurryNeeds</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .top-bar {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .header-main {
+            padding: 20px 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FDCA5D;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            background: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step.completed .step-circle {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .step-label {
+            font-weight: 600;
+            color: #999;
+        }
+
+        .step.completed .step-label {
+            color: #4CAF50;
+        }
+
+        .step-arrow {
+            color: #e0e0e0;
+            font-size: 20px;
+        }
+
+        /* Success Banner */
+        .success-banner {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .order-number {
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Order Details */
+        .order-details {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            color: #333;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .detail-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-content {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .detail-highlight {
+            font-weight: 600;
+            color: #FDCA5D;
+        }
+
+        /* Order Items */
+        .order-items {
+            margin-bottom: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .item-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .item-qty {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .item-price-original {
+            font-size: 13px;
+            color: #999;
+            text-decoration: line-through;
+            display: inline-block;
+            margin-left: 6px;
+        }
+
+        .item-price-current {
+            display: block;
+            margin-top: 5px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .item-promo-label {
+            font-size: 13px;
+            color: #4CAF50;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 16px;
+        }
+
+        .summary-line.total {
+            font-size: 22px;
+            font-weight: bold;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 2px solid #ddd;
+            color: #4CAF50;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #FDCA5D;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e6b84d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(253, 202, 93, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            border-color: #FDCA5D;
+            color: #FDCA5D;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 30px;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1976D2;
+        }
+
+        .info-box-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+
+            .detail-row,
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .success-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="top-bar">
+            ✓ Order Successfully Placed
+        </div>
+        <div class="header-main">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo"> FurryNeeds</div>
+                    <div style="color: #666; font-size: 14px;">
+                        Need help? Call +63 9 8700-0000
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+        <div class="container">
+            <div class="steps-container">
+                <div class="step completed">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Cart</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step completed">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Checkout</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step completed">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Payment</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step completed">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Success Banner -->
+        <div class="success-banner">
+            <div class="success-icon"> </div>
+            <div class="success-title">Your order has been successfully placed!</div>
+            <div class="success-message">
+                Thank you for shopping with FurryNeeds. We're preparing your order for delivery.
+            </div>
+            <div class="order-number">
+                Order Number: <span id="orderNumberDisplay">—</span>
+            </div>
+        </div>
+
+        <!-- Order Details -->
+        <div class="order-details">
+            <h2 class="section-title">Order Details</h2>
+
+            <div class="detail-row">
+                <div class="detail-group">
+                    <div class="detail-label">Order Number</div>
+                    <div class="detail-content detail-highlight" id="orderNumber">—</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Order Date</div>
+                    <div class="detail-content" id="orderDate">—</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-group">
+                    <div class="detail-label">Payment Method</div>
+                    <div class="detail-content" id="paymentMethod">—</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-content" id="email">—</div>
+                </div>
+            </div>
+
+            <div class="detail-group" style="margin-bottom: 0;">
+                <div class="detail-label">Shipping Address</div>
+                <div class="detail-content" id="shippingAddress">—</div>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="order-details">
+            <h2 class="section-title">Order Summary</h2>
+
+            <div class="order-items" id="orderItems">
+                <!-- Items injected by script -->
+            </div>
+
+            <div class="order-summary">
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <span id="subtotal">—</span>
+                </div>
+                <div class="summary-line">
+                    <span>Promo Savings (<span id="discountCode">WELCOME10</span>)</span>
+                    <span style="color: #4CAF50; font-weight: 600;" id="discount">—</span>
+                </div>
+                <div class="summary-line">
+                    <span>Shipping</span>
+                    <span id="shipping" style="color: #4CAF50; font-weight: 600;">—</span>
+                </div>
+                <div class="summary-line total">
+                    <span>Total Paid</span>
+                    <span id="total">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="window.location.href='account.html';">
+                View My Orders
+            </button>
+            <button class="btn btn-primary" onclick="window.location.href='index.html';">
+                Continue Shopping
+            </button>
+        </div>
+
+        <br><br>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        (function () {
+            /* ── Pull data from sessionStorage (set by checkout flow & cart-page.js) ── */
+            const fnOrder = JSON.parse(sessionStorage.getItem('fn_last_order') || localStorage.getItem('fn_last_order') || '{}');
+            const items = JSON.parse(sessionStorage.getItem('fn_cart_items') || '[]');
+            const totals = JSON.parse(sessionStorage.getItem('fn_cart_totals') || '{}');
+
+            /* ── Redirect if no order exists ── */
+            if (!fnOrder.order_id && !fnOrder.OrderID) {
+                window.location.href = 'checkout.html';
+                return;
+            }
+
+            const orderId = fnOrder.order_id || fnOrder.OrderID;
+            const fmt = n => '₱' + parseFloat(n || 0).toFixed(2);
+            const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
+
+            /* ── Order number ── */
+            const orderLabel = '#FN-' + orderId;
+            setText('orderNumberDisplay', orderLabel);
+            setText('orderNumber', orderLabel);
+
+            /* ── Order date ── */
+            const dateStr = new Date(fnOrder.order_date || fnOrder.OrderDate || Date.now())
+                .toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+            setText('orderDate', dateStr);
+
+            /* ── Payment method ── */
+            const payMethod = fnOrder.payment_method || fnOrder.PaymentMethod || 'Cash on Delivery';
+            setText('paymentMethod', payMethod);
+
+            /* ── Customer email ── */
+            setText('email', fnOrder.email || fnOrder.Email || '—');
+
+            /* ── Shipping address ── */
+            const addr = fnOrder.shipping_address || fnOrder.Address || '';
+            const name = fnOrder.customer_name || fnOrder.CustomerName || '';
+            const phone = fnOrder.phone || fnOrder.PhoneNum || '';
+            setHtml('shippingAddress',
+                (name ? '<strong>' + name + '</strong><br>' : '') +
+                (addr ? addr + '<br>' : '') +
+                (phone ? 'Phone: ' + phone : '')
+            );
+
+            /* ── Order items ── */
+            let itemsHTML = '';
+            if (items.length > 0) {
+                items.forEach(function (item) {
+                    const unitPrice = parseFloat(item.unit_price || 0);
+                    const disc = parseFloat(item.discount_amount || 0);
+                    const finalUnit = unitPrice - disc;
+                    const qty = parseInt(item.quantity || 1);
+                    const lineTotal = finalUnit * qty;
+                    const imgTag = item.image
+                        ? '<img src="' + item.image + '" alt="' + item.product_name + '" style="max-width:40px;max-height:40px;object-fit:contain;">'
+                        : '<span style="font-size:24px;">🐾</span>';
+
+                    itemsHTML += '<div class="order-item">' +
+                        '<div class="item-icon">' + imgTag + '</div>' +
+                        '<div class="item-details">' +
+                        '<div class="item-name">' + item.product_name + '</div>' +
+                        '<div class="item-qty">Qty: ' + qty + ' × ' +
+                        (disc > 0
+                            ? '<span style="text-decoration:line-through;color:#999;">' + fmt(unitPrice) + '</span> ' + fmt(finalUnit)
+                            : fmt(unitPrice)) +
+                        '</div>' +
+                        (disc > 0 ? '<div class="item-promo-label">Promo applied</div>' : '') +
+                        '</div>' +
+                        '<div class="item-price"><span class="item-price-current">' + fmt(lineTotal) + '</span></div>' +
+                        '</div>';
+                });
+            } else {
+                /* Fallback: show order total only when individual items aren't in sessionStorage */
+                itemsHTML = '<div style="padding:20px;color:#666;text-align:center;">Item details not available — view your order history for full details.</div>';
+            }
+            setHtml('orderItems', itemsHTML);
+
+            /* ── Totals ── */
+            const subtotal = totals.subtotal !== undefined ? totals.subtotal : parseFloat(fnOrder.total_amount || fnOrder.TotalAmount || 0);
+            const discount = totals.discount !== undefined ? totals.discount : parseFloat(fnOrder.discount_amount || fnOrder.DiscountAmount || 0);
+            const shipping = totals.shipping !== undefined ? totals.shipping : parseFloat(fnOrder.delivery_fee || fnOrder.DeliveryFee || 0);
+            const total = totals.total !== undefined ? totals.total : parseFloat(fnOrder.final_amount || fnOrder.FinalAmount || subtotal - discount + shipping);
+
+            setText('subtotal', fmt(subtotal));
+            setText('discount', discount > 0 ? '-' + fmt(discount) : fmt(0));
+            setText('shipping', shipping === 0 ? 'FREE' : fmt(shipping));
+            setText('total', fmt(total));
+
+            /* ── Discount code label (hide row if no discount) ── */
+            const discCodeEl = document.getElementById('discountCode');
+            if (discCodeEl) discCodeEl.textContent = fnOrder.promo_name || fnOrder.PromoName || 'PROMO';
+            if (discount === 0) {
+                const discRow = document.querySelector('.summary-line:has(#discountCode)');
+                if (discRow) discRow.style.display = 'none';
+            }
+
+            /* ── Clear cart sessionStorage after render ── */
+            sessionStorage.removeItem('fn_cart_items');
+            sessionStorage.removeItem('fn_cart_totals');
+        })();
+    </script>

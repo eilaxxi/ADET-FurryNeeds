@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - FurryNeeds Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+        .admin-header {
+            background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 28px; font-weight: bold; }
+        .admin-user { display: flex; align-items: center; gap: 15px; }
+        .user-avatar {
+            width: 40px; height: 40px;
+            background: white; color: #FDCA5D;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .admin-layout {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        .sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 5px; }
+        .sidebar-menu a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 15px;
+            text-decoration: none; color: #333;
+            border-radius: 6px; transition: all 0.3s;
+            font-weight: 500;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: #FDCA5D; color: white;
+        }
+        .menu-icon { font-size: 20px; width: 24px; }
+        .main-content { min-height: 500px; }
+        .page-header {
+            display: flex; justify-content: space-between;
+            align-items: center; gap: 16px; margin-bottom: 30px;
+        }
+        .page-title { font-size: 28px; font-weight: bold; }
+        .page-subtitle { margin-top: 8px; color: #666; font-size: 15px; }
+        .header-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn {
+            padding: 12px 24px; border: none; border-radius: 6px;
+            cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 14px;
+        }
+        .btn-primary { background: #FDCA5D; color: white; }
+        .btn-primary:hover { background: #e6b84d; }
+        .btn-secondary { background: #f0f0f0; color: #333; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-sm { padding: 7px 12px; font-size: 13px; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white; border-radius: 8px;
+            padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #FDCA5D;
+        }
+        .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .stat-title { color: #666; font-size: 14px; text-transform: uppercase; font-weight: 600; }
+        .stat-icon {
+            font-size: 28px; width: 50px; height: 50px;
+            background: #fff9ed; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .stat-value { font-size: 30px; font-weight: bold; margin-bottom: 10px; }
+        .stat-change { font-size: 14px; color: #4CAF50; }
+        .stat-change.warning { color: #ff9800; }
+        .stat-change.negative { color: #dc3545; }
+        .content-section {
+            background: white; border-radius: 8px;
+            padding: 25px; margin-bottom: 20px;
+        }
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 12px; margin-bottom: 20px; padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .section-title { font-size: 20px; font-weight: bold; }
+        .orders-toolbar {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 15px; margin-bottom: 20px;
+        }
+        .search-box, .filter-select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px; font-size: 14px;
+            transition: border-color 0.3s;
+            background: white;
+        }
+        .search-box:focus, .filter-select:focus {
+            outline: none; border-color: #FDCA5D;
+        }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th {
+            background: #f8f9fa; padding: 12px;
+            text-align: left; font-weight: 600; color: #666;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .data-table td { padding: 15px 12px; border-bottom: 1px solid #e0e0e0; }
+        .data-table tr:hover { background: #f8f9fa; }
+        .status-badge {
+            padding: 5px 12px; border-radius: 4px;
+            font-size: 12px; font-weight: 600;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-processing { background: #cff4fc; color: #055160; }
+        .status-shipped { background: #d1ecf1; color: #0c5460; }
+        .status-delivered { background: #d4edda; color: #155724; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .payment-badge {
+            padding: 4px 10px; border-radius: 4px;
+            font-size: 12px; font-weight: 600;
+        }
+        .payment-paid { background: #d4edda; color: #155724; }
+        .payment-unpaid { background: #fff3cd; color: #856404; }
+        .payment-cod { background: #e2e3e5; color: #383d41; }
+        .action-btns { display: flex; gap: 6px; }
+        .empty-state {
+            text-align: center; padding: 60px 20px; color: #999;
+            display: none;
+        }
+        .empty-state .empty-icon { font-size: 60px; margin-bottom: 15px; }
+        .empty-state p { font-size: 16px; }
+        /* Modal */
+        .modal {
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white; border-radius: 12px;
+            padding: 30px; width: 90%; max-width: 600px;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 25px;
+            padding-bottom: 15px; border-bottom: 2px solid #e0e0e0;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .close-btn {
+            background: none; border: none; font-size: 28px;
+            cursor: pointer; color: #999; line-height: 1;
+        }
+        .close-btn:hover { color: #333; }
+        .detail-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 15px; margin-bottom: 20px;
+        }
+        .detail-item label {
+            display: block; font-size: 12px; color: #666;
+            text-transform: uppercase; font-weight: 600; margin-bottom: 5px;
+        }
+        .detail-item span {
+            font-size: 15px; font-weight: 500;
+        }
+        .order-items-title {
+            font-weight: 700; margin-bottom: 10px; font-size: 15px;
+            color: #333;
+        }
+        .order-items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .order-items-table th {
+            background: #f8f9fa; padding: 10px 12px;
+            text-align: left; font-size: 13px;
+            color: #666; border-bottom: 2px solid #e0e0e0;
+        }
+        .order-items-table td { padding: 12px; border-bottom: 1px solid #e0e0e0; font-size: 14px; }
+        /* Status Stepper */
+        .status-pipeline { margin-top: 22px; }
+        .status-pipeline-label {
+            font-size: 13px; font-weight: 700; color: #888;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
+        }
+        .status-steps {
+            display: flex; align-items: center; gap: 0;
+            margin-bottom: 18px;
+        }
+        .status-step {
+            display: flex; flex-direction: column; align-items: center;
+            flex: 1; position: relative;
+        }
+        .status-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 16px; left: 60%;
+            width: 80%; height: 3px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+        .status-step.done:not(:last-child)::after,
+        .status-step.active:not(:last-child)::after {
+            background: #FDCA5D;
+        }
+        .step-dot {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #aaa;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            font-weight: 700;
+            z-index: 1;
+            position: relative;
+            transition: background 0.3s, color 0.3s;
+        }
+        .status-step.done .step-dot {
+            background: #FDCA5D; color: white;
+        }
+        .status-step.active .step-dot {
+            background: #e6a817; color: white;
+            box-shadow: 0 0 0 4px rgba(253,202,93,0.25);
+        }
+        .step-label {
+            font-size: 11px; font-weight: 600;
+            color: #bbb;
+            margin-top: 6px; text-align: center;
+            white-space: nowrap;
+        }
+        .status-step.done .step-label,
+        .status-step.active .step-label { color: #333; }
+        .pipeline-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+        .btn-advance {
+            background: #FDCA5D; color: white; border: none;
+            padding: 10px 22px; border-radius: 6px; font-size: 14px;
+            font-weight: 600; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-advance:hover { background: #e6a817; }
+        .btn-cancel-order {
+            background: #fff0f0; color: #dc3545; border: 2px solid #dc3545;
+            padding: 10px 18px; border-radius: 6px; font-size: 14px;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-cancel-order:hover { background: #dc3545; color: white; }
+        .status-final-msg {
+            font-size: 14px; font-weight: 600;
+            padding: 10px 0; color: #155724;
+        }
+        .status-final-msg.cancelled { color: #721c24; }
+        .modal-actions { display: flex; gap: 10px; }
+        .order-total-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 14px 0;
+            border-top: 2px solid #e0e0e0;
+            font-weight: 600;
+            align-items: center;
+        }
+
+        .order-total-row > span {
+            display: flex;
+            justify-content: flex-end;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        .loading-row td { text-align: center; padding: 40px; color: #999; }
+        .error-msg {
+            background: #f8d7da; color: #721c24;
+            border-radius: 6px; padding: 12px 16px;
+            margin-bottom: 15px; display: none;
+        }
+        .success-msg {
+            background: #d4edda; color: #155724;
+            border-radius: 6px; padding: 12px 16px;
+            margin-bottom: 15px; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="logo">FurryNeeds Admin</div>
+            <div class="admin-user">
+            <button class="btn btn-secondary" onclick="handleLogout()" style="background:rgba(255,255,255,0.2);color:white;border:1px solid white;">Logout</button>
+        </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html"><span class="menu-icon"></span> Dashboard</a></li>
+            <li><a href="product-management.html"><span class="menu-icon"></span> Products</a></li>
+            <li><a href="orders.html" class="active"><span class="menu-icon"></span> Orders</a></li>
+            <li><a href="customers.html"><span class="menu-icon"></span> Customers</a></li>
+            <li><a href="sales-reports.html"><span class="menu-icon"></span> Reports</a></li>
+            <li><a href="inventory.html"><span class="menu-icon"></span> Inventory</a></li>
+            <li><a href="settings.html"><span class="menu-icon"></span> Settings</a></li>
+        </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Orders</h1>
+                    <p class="page-subtitle">Manage and update all customer orders</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="exportOrdersBtn">⬇ Export CSV</button>
+                </div>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Total Orders</span>
+                        
+                    </div>
+                    <div class="stat-value" id="statTotal">—</div>
+                    <div class="stat-change">All time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Pending</span>
+                        
+                    </div>
+                    <div class="stat-value" id="statPending">—</div>
+                    <div class="stat-change warning">Needs action</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Processing</span>
+                        
+                    </div>
+                    <div class="stat-value" id="statProcessing">—</div>
+                    <div class="stat-change">In progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Delivered</span>
+                        
+                    </div>
+                    <div class="stat-value" id="statDelivered">—</div>
+                    <div class="stat-change">Completed</div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">All Orders</h2>
+                </div>
+
+                <div id="successMsg" class="success-msg"></div>
+                <div id="errorMsg" class="error-msg"></div>
+
+                <!-- Toolbar -->
+                <div class="orders-toolbar">
+                    <input type="text" class="search-box" id="searchInput" placeholder="Search by order ID or customer name...">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <select class="filter-select" id="paymentFilter">
+                        <option value="all">All Payments</option>
+                        <option value="COD">COD</option>
+                        <option value="GCash">GCash</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Unpaid">Unpaid</option>
+                    </select>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <tr class="loading-row"><td colspan="8">Loading orders...</td></tr>
+                    </tbody>
+                </table>
+                <div class="empty-state" id="emptyState">
+                    
+                    <p>No orders found matching your filters.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Detail / Update Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Order Details</h2>
+                <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <label>Order ID</label>
+                    <span id="modalOrderId">—</span>
+                </div>
+                <div class="detail-item">
+                    <label>Order Date</label>
+                    <span id="modalOrderDate">—</span>
+                </div>
+                <div class="detail-item">
+                    <label>Customer</label>
+                    <span id="modalCustomer">—</span>
+                </div>
+                <div class="detail-item">
+                    <label>Contact</label>
+                    <span id="modalContact">—</span>
+                </div>
+                <div class="detail-item" style="grid-column: 1 / -1;">
+                    <label>Delivery Address</label>
+                    <span id="modalAddress">—</span>
+                </div>
+                <div class="detail-item">
+                    <label>Payment Method</label>
+                    <span id="modalPayment">—</span>
+                </div>
+                <div class="detail-item">
+                    <label>Payment Status</label>
+                    <span id="modalPaymentStatus">—</span>
+                </div>
+            </div>
+
+            <div class="order-items-title">Order Items</div>
+            <table class="order-items-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody id="modalItemsBody">
+                    <tr><td colspan="4" style="text-align:center; color:#999;">Loading...</td></tr>
+                </tbody>
+            </table>
+            <div class="order-total-row">
+                <span>Delivery Fee: <strong id="modalDeliveryFee">—</strong></span>
+                <span>Discount: <strong id="modalDiscount">—</strong></span>
+                <span>Total: <strong id="modalTotal">—</strong></span>
+            </div>
+
+            <!-- Status Pipeline -->
+            <div class="status-pipeline">
+                <div class="status-pipeline-label">Order Status</div>
+                <div class="status-steps" id="modalStatusSteps"></div>
+                <div class="pipeline-actions" id="modalPipelineActions"></div>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="closeOrderModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/orders-db.js"></script>
+    <script>
+        let allOrders = [];
+        let currentOrderId = null;
+
+        // Load orders on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrders();
+        });
+
+        function loadOrders() {
+            fetchOrders(function(orders) {
+                allOrders = orders;
+                renderOrders(orders);
+                updateStats(orders);
+            }, function(err) {
+                document.getElementById('ordersTableBody').innerHTML =
+                    '<tr class="loading-row"><td colspan="8">Failed to load orders. Check your connection.</td></tr>';
+            });
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            const empty = document.getElementById('emptyState');
+
+            if (!orders || orders.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            tbody.innerHTML = orders.map(function(o) {
+                const statusClass = 'status-' + (o.order_status || 'pending').toLowerCase();
+                const payMethod = o.payment_method || 'COD';
+                const payStatus = o.payment_status || 'Unpaid';
+                const payClass = payStatus === 'Paid' ? 'payment-paid' : (payMethod === 'COD' ? 'payment-cod' : 'payment-unpaid');
+                const dateStr = o.order_date ? new Date(o.order_date).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) : '—';
+
+                return '<tr data-status="' + (o.order_status || '') + '" data-payment="' + payMethod + '" data-paymentstatus="' + payStatus + '" data-name="' + (o.customer_name || '').toLowerCase() + '" data-id="' + o.order_id + '">' +
+                    '<td><strong>#' + o.order_id + '</strong></td>' +
+                    '<td>' + (o.customer_name || '—') + '</td>' +
+                    '<td>' + dateStr + '</td>' +
+                    '<td>' + (o.items ? o.items.length : 0) + ' item(s)</td>' +
+                    '<td>&#8369;' + parseFloat(o.final_amount || o.total_amount || 0).toFixed(2) + '</td>' +
+                    '<td><span class="payment-badge ' + payClass + '">' + payMethod + '</span></td>' +
+                    '<td><span class="status-badge ' + statusClass + '">' + (o.order_status || 'Pending') + '</span></td>' +
+                    '<td><div class="action-btns">' +
+                        '<button class="btn btn-primary btn-sm" onclick="openOrderModal(' + o.order_id + ')">View / Update</button>' +
+                    '</div></td>' +
+                '</tr>';
+            }).join('');
+        }
+
+        function updateStats(orders) {
+            document.getElementById('statTotal').textContent = orders.length;
+            document.getElementById('statPending').textContent = orders.filter(o => o.order_status === 'Pending').length;
+            document.getElementById('statProcessing').textContent = orders.filter(o => o.order_status === 'Processing').length;
+            document.getElementById('statDelivered').textContent = orders.filter(o => o.order_status === 'Delivered').length;
+        }
+
+        function filterOrders() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const payment = document.getElementById('paymentFilter').value;
+            const rows = document.querySelectorAll('#ordersTableBody tr[data-id]');
+            let visible = 0;
+
+            rows.forEach(function(row) {
+                const name = row.dataset.name || '';
+                const id = row.dataset.id || '';
+                const rowStatus = row.dataset.status || '';
+                const rowPayment = row.dataset.payment || '';
+                const rowPayStatus = row.dataset.paymentstatus || '';
+
+                const matchSearch = name.includes(search) || id.includes(search);
+                const matchStatus = status === 'all' || rowStatus === status;
+                const matchPayment = payment === 'all' || rowPayment === payment || rowPayStatus === payment;
+
+                const show = matchSearch && matchStatus && matchPayment;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterOrders);
+        document.getElementById('statusFilter').addEventListener('change', filterOrders);
+        document.getElementById('paymentFilter').addEventListener('change', filterOrders);
+
+        // Status pipeline definition (ordered flow)
+        const STATUS_FLOW = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+        // No emoji icons — labels only
+        const STATUS_LABELS = { Pending: 'Pending', Processing: 'Processing', Shipped: 'Shipped', Delivered: 'Delivered', Cancelled: 'Cancelled' };
+
+        function renderStatusPipeline(currentStatus) {
+            const stepsEl = document.getElementById('modalStatusSteps');
+            const actionsEl = document.getElementById('modalPipelineActions');
+
+            const isCancelled = currentStatus === 'Cancelled';
+            const currentIdx = STATUS_FLOW.indexOf(currentStatus);
+
+            // Draw the stepper dots
+            stepsEl.innerHTML = STATUS_FLOW.map(function(s, i) {
+                let cls = 'status-step';
+                if (isCancelled) {
+                    // all grey
+                } else if (i < currentIdx) {
+                    cls += ' done';
+                } else if (i === currentIdx) {
+                    cls += ' active';
+                }
+                const dotContent = isCancelled ? (i + 1) : (i < currentIdx ? '\u2713' : (i === currentIdx ? s.charAt(0) : (i + 1)));
+                return '<div class="' + cls + '">' +
+                    '<div class="step-dot">' + dotContent + '</div>' +
+                    '<div class="step-label">' + s + '</div>' +
+                '</div>';
+            }).join('');
+
+            // Draw action buttons
+            actionsEl.innerHTML = '';
+
+            if (isCancelled) {
+                actionsEl.innerHTML = '<span class="status-final-msg cancelled">Order has been cancelled.</span>';
+            } else if (currentStatus === 'Delivered') {
+                actionsEl.innerHTML = '<span class="status-final-msg">Order successfully delivered.</span>';
+            } else {
+                const nextStatus = STATUS_FLOW[currentIdx + 1];
+                if (nextStatus) {
+                    const advBtn = document.createElement('button');
+                    advBtn.className = 'btn-advance';
+                    advBtn.textContent = 'Mark as ' + nextStatus;
+                    advBtn.onclick = function() { doUpdateStatus(nextStatus); };
+                    actionsEl.appendChild(advBtn);
+                }
+                // Cancel is always available for non-final statuses
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'btn-cancel-order';
+                cancelBtn.textContent = 'Cancel Order';
+                cancelBtn.onclick = function() {
+                    if (confirm('Are you sure you want to cancel Order #' + currentOrderId + '?')) {
+                        doUpdateStatus('Cancelled');
+                    }
+                };
+                actionsEl.appendChild(cancelBtn);
+            }
+        }
+
+        function doUpdateStatus(newStatus) {
+            if (!currentOrderId) return;
+            updateOrderStatus(currentOrderId, newStatus, function() {
+                showSuccess('Order #' + currentOrderId + ' updated to "' + newStatus + '".');
+                closeOrderModal();
+                loadOrders();
+            }, function() {
+                showError('Failed to update order status. Please try again.');
+            });
+        }
+
+        function openOrderModal(orderId) {
+            currentOrderId = orderId;
+            // Reset modal
+            document.getElementById('modalItemsBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">Loading...</td></tr>';
+            document.getElementById('modalStatusSteps').innerHTML = '';
+            document.getElementById('modalPipelineActions').innerHTML = '';
+
+            fetchOrderDetail(orderId, function(data) {
+                const o = data.order;
+                const items = data.items || [];
+
+                document.getElementById('modalOrderId').textContent = '#' + o.order_id;
+                document.getElementById('modalOrderDate').textContent = o.order_date ? new Date(o.order_date).toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' }) : '—';
+                document.getElementById('modalCustomer').textContent = o.customer_name || '—';
+                document.getElementById('modalContact').textContent = o.phone || '—';
+                document.getElementById('modalAddress').textContent = o.address_line || '—';
+                document.getElementById('modalPayment').textContent = o.payment_method || 'COD';
+                document.getElementById('modalPaymentStatus').textContent = o.payment_status || 'Unpaid';
+                const peso = String.fromCharCode(8369);
+                document.getElementById('modalDeliveryFee').textContent = peso + parseFloat(o.delivery_fee || 0).toFixed(2);
+                document.getElementById('modalDiscount').textContent = peso + parseFloat(o.discount_amount || 0).toFixed(2);
+                document.getElementById('modalTotal').textContent = peso + parseFloat(o.final_amount || o.total_amount || 0).toFixed(2);
+
+                // Render status pipeline
+                renderStatusPipeline(o.order_status || 'Pending');
+
+                if (items.length === 0) {
+                    document.getElementById('modalItemsBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">No items found.</td></tr>';
+                } else {
+                    document.getElementById('modalItemsBody').innerHTML = items.map(function(item) {
+                        return '<tr>' +
+                            '<td>' + (item.product_name || '—') + '</td>' +
+                            '<td>' + item.quantity + '</td>' +
+                            '<td>&#8369;' + parseFloat(item.unit_price || 0).toFixed(2) + '</td>' +
+                            '<td>&#8369;' + parseFloat(item.subtotal || 0).toFixed(2) + '</td>' +
+                        '</tr>';
+                    }).join('');
+                }
+            }, function() {
+                document.getElementById('modalItemsBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#c00;">Could not load details.</td></tr>';
+            });
+
+            document.getElementById('orderModal').classList.add('show');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('show');
+            currentOrderId = null;
+        }
+
+        document.getElementById('orderModal').addEventListener('click', function(e) {
+            if (e.target === this) closeOrderModal();
+        });
+
+        document.getElementById('exportOrdersBtn').addEventListener('click', function() {
+            exportOrdersCSV(allOrders);
+        });
+
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(function() { el.style.display = 'none'; }, 4000);
+        }
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(function() { el.style.display = 'none'; }, 4000);
+        }
+    </script>
+</body>
+</html>

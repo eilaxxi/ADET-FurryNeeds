@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dogs - FurryNeeds</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ── Header ── */
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .top-bar {
+            background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%);
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .header-main { padding: 20px 0; }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #FDCA5D;
+            cursor: pointer;
+        }
+        .search-bar { flex: 1; max-width: 500px; }
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+        }
+        .search-bar input:focus {
+            outline: none;
+            border-color: #FDCA5D;
+        }
+        .header-actions { display: flex; gap: 20px; align-items: center; }
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+            color: #333;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .icon-btn:hover {
+            color: #FDCA5D;
+            transform: scale(1.1);
+        }
+        .icon-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        nav {
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 15px 0;
+            list-style: none;
+        }
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        .nav-menu a:hover, .nav-menu a.active { color: #FDCA5D; }
+
+        /* ── Page Hero ── */
+        .page-hero {
+            background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%);
+            color: white;
+            padding: 50px 0;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .page-hero h1 { font-size: 42px; margin-bottom: 10px; }
+        .page-hero p { font-size: 18px; opacity: 0.95; }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            padding: 15px 0 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        .breadcrumb a { color: #FDCA5D; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+
+        /* ── Filter Bar ── */
+        .filter-bar {
+            background: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .filter-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-label { font-weight: 600; color: #333; }
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            border-color: #FDCA5D;
+            background: #FDCA5D;
+            color: white;
+        }
+        .sort-select {
+            margin-left: auto;
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .sort-select:focus { outline: none; border-color: #FDCA5D; }
+
+        /* ── Layout ── */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 30px;
+            padding-bottom: 60px;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            height: fit-content;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .filter-section { margin-bottom: 28px; }
+        .filter-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 0;
+            font-size: 14px;
+            color: #444;
+            cursor: pointer;
+        }
+        .filter-option input[type="checkbox"] {
+            accent-color: #FDCA5D;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .filter-option label { cursor: pointer; }
+        .price-inputs {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .price-inputs input {
+            width: 90px;
+            padding: 9px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .price-inputs input:focus { outline: none; border-color: #FDCA5D; }
+        .price-inputs span { color: #999; font-size: 14px; }
+        .btn-apply {
+            width: 100%;
+            padding: 10px;
+            background: #FDCA5D;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .btn-apply:hover { background: #e6b84d; }
+        .btn-clear {
+            width: 100%;
+            padding: 10px;
+            background: #f0f0f0;
+            color: #555;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 8px;
+            transition: background 0.3s;
+        }
+        .btn-clear:hover { background: #e0e0e0; }
+
+        /* ── Products Area ── */
+        .products-area { min-width: 0; }
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .products-count { font-size: 14px; color: #666; margin-top: 4px; }
+
+        /* ── Products Grid ── */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 22px;
+        }
+        .product-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 72px;
+            margin-bottom: 14px;
+            position: relative;
+        }
+        .badge-new {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #4CAF50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-sale {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .product-category {
+            font-size: 12px;
+            color: #FDCA5D;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .product-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            line-height: 1.3;
+        }
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+        .stars { color: #ffc107; font-size: 14px; }
+        .rating-count { font-size: 12px; color: #999; }
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .current-price { font-size: 20px; font-weight: bold; color: #333; }
+        .old-price { font-size: 14px; color: #999; text-decoration: line-through; }
+        .btn-add-cart {
+            width: 100%;
+            padding: 11px;
+            background: #FDCA5D;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+        .btn-add-cart:hover { background: #e6b84d; }
+
+        /* ── No Results ── */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 18px;
+            display: none;
+            grid-column: 1 / -1;
+        }
+        .no-results span { font-size: 60px; display: block; margin-bottom: 15px; }
+
+        /* ── Pagination ── */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 40px;
+        }
+        .page-btn {
+            padding: 10px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .page-btn:hover { border-color: #FDCA5D; color: #FDCA5D; }
+        .page-btn.active {
+            background: #FDCA5D;
+            color: white;
+            border-color: #FDCA5D;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #333;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        /* ── CTA Banner ── */
+        .cta-banner {
+            background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%);
+            color: white;
+            padding: 60px 0;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .cta-banner h2 { font-size: 36px; margin-bottom: 15px; }
+        .cta-banner p { font-size: 18px; margin-bottom: 25px; opacity: 0.95; }
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: white; color: #FDCA5D; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+        /* ── Footer ── */
+        footer { background: #2c3e50; color: white; padding: 50px 0 20px; }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        .footer-section h3 { margin-bottom: 20px; color: #FDCA5D; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: #ecf0f1; text-decoration: none; transition: color 0.3s; }
+        .footer-links a:hover { color: #FDCA5D; }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            text-align: center;
+            color: #bdc3c7;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .page-hero h1 { font-size: 30px; }
+            .footer-content { grid-template-columns: repeat(2, 1fr); }
+            .nav-menu { gap: 20px; }
+            .filter-content { gap: 10px; }
+            .sort-select { margin-left: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+    <div class="top-bar">
+        Free Shipping on Orders Over ₱2,900 | 30-Day Money Back Guarantee
+    </div>
+    <div class="header-main">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" onclick="window.location.href='index.html'">FurryNeeds</div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search dog products..." oninput="applyFilters()">
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="window.location.href='cart.html'" title="Shopping Cart">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span class="badge" id="cartBadge">0</span>
+                    </button>
+                    <button class="icon-btn" onclick="window.location.href='account.html'" title="Account">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav>
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html" class="active">Dogs</a></li>
+                <li><a href="cats.html">Cats</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<!-- ── Page Hero ── -->
+<section class="page-hero">
+    <div class="container">
+        <h1>🐕 Dog Products</h1>
+        <p>Premium food, toys, treats & healthcare for your best friend</p>
+    </div>
+</section>
+
+<!-- ── Filter Bar ── -->
+<section class="filter-bar">
+    <div class="container">
+        <div class="filter-content">
+            <span class="filter-label">Category:</span>
+            <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+            <button class="filter-btn" onclick="setFilter('Dog Food', this)">Food</button>
+            <button class="filter-btn" onclick="setFilter('Dog Toys', this)">Toys</button>
+            <button class="filter-btn" onclick="setFilter('Dog Treats', this)">Treats</button>
+            <button class="filter-btn" onclick="setFilter('Dog Accessories', this)">Accessories</button>
+            <button class="filter-btn" onclick="setFilter('Dog Healthcare', this)">Healthcare</button>
+            <select class="sort-select" onchange="sortProducts(this.value)">
+                <option value="default">Sort: Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Highest Rated</option>
+            </select>
+        </div>
+    </div>
+</section>
+
+<!-- ── Main Layout ── -->
+<div class="container">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="index.html">Home</a> / Dogs
+    </div>
+
+    <div class="main-layout">
+
+        <!-- ── Sidebar ── -->
+        <aside class="sidebar">
+            <div class="sidebar-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px;">
+                    <line x1="4" y1="6" x2="20" y2="6"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                    <line x1="11" y1="18" x2="13" y2="18"></line>
+                </svg>Filter Products
+            </div>
+
+            <div class="filter-section">
+                <h3>Category</h3>
+                <div class="filter-option">
+                    <input type="checkbox" id="cb-food" onchange="applyFilters()">
+                    <label for="cb-food">Dog Food</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cb-toys" onchange="applyFilters()">
+                    <label for="cb-toys">Dog Toys</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cb-treats" onchange="applyFilters()">
+                    <label for="cb-treats">Dog Treats</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cb-accessories" onchange="applyFilters()">
+                    <label for="cb-accessories">Dog Accessories</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cb-healthcare" onchange="applyFilters()">
+                    <label for="cb-healthcare">Dog Healthcare</label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3>Rating</h3>
+                <div class="filter-option">
+                    <input type="checkbox" id="cb-5star" onchange="applyFilters()">
+                    <label for="cb-5star">★★★★★ (5 stars)</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cb-4star" onchange="applyFilters()">
+                    <label for="cb-4star">★★★★☆ (4 stars)</label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3>Price Range</h3>
+                <div class="price-inputs">
+                    <input type="number" id="priceMin" placeholder="Min ₱" min="0">
+                    <span>–</span>
+                    <input type="number" id="priceMax" placeholder="Max ₱" min="0">
+                </div>
+                <button class="btn-apply" onclick="applyFilters()">Apply Filter</button>
+                <button class="btn-clear" onclick="clearFilters()">Clear All</button>
+            </div>
+        </aside>
+
+        <!-- ── Products Area ── -->
+        <div class="products-area">
+            <div class="products-header">
+                <div>
+                    <h2 style="font-size: 24px;">Dog Products</h2>
+                    <p class="products-count" id="productsCount">Showing all products</p>
+                </div>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+
+                <!-- Product 1 -->
+                <div class="product-card" data-category="Dog Food" data-price="499" data-rating="5" onclick="window.location.href='product-detail.html?id=1&title=Premium Grain-Free Adult Dog Food&img=photo/image.png&price=499&category=Dog Food&rating=5&reviews=248'">
+                    <div class="product-image">
+                       <img src="photo/image.png" alt="meat" style="width: 85px; height: 85px;"> 
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="product-category">Dog Food</div>
+                    <div class="product-title">Premium Grain-Free Adult Dog Food </div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(248)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱499.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Premium Grain-Free Adult Dog Food', 1)">Add to Cart</button>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card" data-category="Dog Food" data-price="3200" data-rating="4" onclick="window.location.href='product-detail.html?id=2&title=Organic Chicken &amp; Rice Formula&img=photo/organic.jpg&price=599&category=Dog Food&rating=4&reviews=187'">
+                    <div class="product-image">
+                        <img src="photo/organic.jpg" alt="meat" style="width: 85px; height: 85px;"> 
+                        <span class="badge-sale">-20%</span>
+                    </div>
+                    <div class="product-category">Dog Food</div>
+                    <div class="product-title">Organic Chicken & Rice Formula </div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-count">(187)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱599.00</span>
+                        <span class="old-price">₱479.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Organic Chicken & Rice Formula')">Add to Cart</button>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card" data-category="Dog Food" data-price="2800" data-rating="5" onclick="window.location.href='product-detail.html?id=3&title=Sensitive Stomach Lamb &amp; Oatmeal&img=photo/oatmeal.jpg&price=300&category=Dog Food&rating=5&reviews=312'">
+                    <div class="product-image">
+                        <img src="photo/oatmeal.jpg" alt="meat" style="width: 85px; height: 85px;"> 
+                    </div>
+                    <div class="product-category">Dog Food</div>
+                    <div class="product-title">Sensitive Stomach Lamb & Oatmeal</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(312)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱300.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Sensitive Stomach Lamb & Oatmeal')">Add to Cart</button>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card" data-category="Dog Food" data-price="3000" data-rating="4" onclick="window.location.href='product-detail.html?id=4&title=Puppy Development Formula 25lb&img=photo/OIP.webp&price=400&category=Dog Food&rating=4&reviews=156'">
+                    <div class="product-image">
+                        <img src="photo/OIP.webp" alt="meat" style="width: 85px; height: 85px;"> 
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="product-category">Dog Food</div>
+                    <div class="product-title">Puppy Development Formula 25lb</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-count">(156)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱400.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Puppy Development Formula')">Add to Cart</button>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="product-card" data-category="Dog Food" data-price="2600" data-rating="5" onclick="window.location.href='product-detail.html?id=5&title=Senior Dog Nutrition Formula 18lb&img=photo/senior.jpg&price=499&category=Dog Food&rating=5&reviews=203'">
+                    <div class="product-image">
+                        <img src="photo/senior.jpg" alt="meat" style="width: 85px; height: 85px;">
+                    </div>
+                    <div class="product-category">Dog Food</div>
+                    <div class="product-title">Senior Dog Nutrition Formula 18lb</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(203)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱499.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Senior Dog Nutrition Formula')">Add to Cart</button>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="product-card" data-category="Dog Food" data-price="2400" data-rating="4" onclick="window.location.href='product-detail.html?id=6&title=Weight Management Turkey Recipe 22lb&img=photo/turkey.png&price=400&category=Dog Food&rating=4&reviews=142'">
+                    <div class="product-image">
+                          <img src="photo/turkey.png" alt="meat" style="width: 85px; height: 85px;">
+                        <span class="badge-sale">-15%</span>
+                    </div>
+                    <div class="product-category">Dog Food</div>
+                    <div class="product-title">Weight Management Turkey Recipe 22lb</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-count">(142)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱400.00</span>
+                        <span class="old-price">₱700.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Weight Management Turkey Recipe')">Add to Cart</button>
+                </div>
+
+                <!-- Product 7 -->
+                <div class="product-card" data-category="Dog Toys" data-price="120" data-rating="4" onclick="window.location.href='product-detail.html?id=7&title=Interactive Squeaky Dog Toy (Duck)&img=photo/duck.png&price=120&category=Dog Toys&rating=4&reviews=187'">
+                    <div class="product-image">
+                        <img src="photo/duck.png" alt="duck" style="width: 85px; height: 85px;">
+                        <span class="badge-sale">-40%</span>
+                    </div>
+                    <div class="product-category">Dog Toys</div>
+                    <div class="product-title">Interactive Squeaky Dog Toy (Duck)</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-count">(187)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱120.00</span>
+                        <span class="old-price">₱200.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Interactive Squeaky Dog Toy')">Add to Cart</button>
+                </div>
+
+                <!-- Product 8 -->
+                <div class="product-card" data-category="Dog Toys" data-price="350" data-rating="5" onclick="window.location.href='product-detail.html?id=8&title=Durable Rubber Chew &amp; Fetch Ball Set&img=photo/ball.webp&price=150&category=Dog Toys&rating=5&reviews=241'">
+                    <div class="product-image">
+                        <img src="photo/ball.webp" alt="ball" style="width: 85px; height: 85px;">
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="product-category">Dog Toys</div>
+                    <div class="product-title">Durable Rubber Chew & Fetch Ball Set</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(241)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱150.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Durable Rubber Chew & Fetch Ball Set')">Add to Cart</button>
+                </div>
+
+                <!-- Product 9 -->
+                <div class="product-card" data-category="Dog Treats" data-price="199" data-rating="5" onclick="window.location.href='product-detail.html?id=9&title=Natural Dental Chew Sticks (30-Count)&img=photo/dental.png&price=199&category=Dog Treats&rating=5&reviews=312'">
+                    <div class="product-image">
+                        <img src="photo/dental.png" alt="dental chew" style="width: 85px; height: 85px;">
+                    </div>
+                    <div class="product-category">Dog Treats</div>
+                    <div class="product-title">Natural Dental Chew Sticks (30-Count)</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(312)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱199.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Natural Dental Chew Sticks')">Add to Cart</button>
+                </div>
+
+                <!-- Product 10 -->
+                <div class="product-card" data-category="Dog Treats" data-price="149" data-rating="4" onclick="window.location.href='product-detail.html?id=10&title=Bacon &amp; Cheese Training Treats&img=photo/bacon.png&price=149&category=Dog Treats&rating=4&reviews=198'">
+                    <div class="product-image">
+                        <img src="photo/bacon.png" alt="bacon" style="width: 85px; height: 85px;">
+                        <span class="badge-sale">-10%</span>
+                    </div>
+                    <div class="product-category">Dog Treats</div>
+                    <div class="product-title">Bacon & Cheese Training Treats (50-Count)</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-count">(198)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱149.00</span>
+                        <span class="old-price">₱165.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Bacon & Cheese Training Treats')">Add to Cart</button>
+                </div>
+
+                <!-- Product 11 -->
+                <div class="product-card" data-category="Dog Accessories" data-price="799" data-rating="5" onclick="window.location.href='product-detail.html?id=11&title=Orthopedic Memory Foam Dog Bed&img=photo/bed.png&price=699&category=Dog Accessories&rating=5&reviews=167'">
+                    <div class="product-image">
+                        <img src="photo/bed.png" alt="bacon" style="width: 85px; height: 85px;">
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="product-category">Dog Accessories</div>
+                    <div class="product-title">Orthopedic Memory Foam Dog Bed (Washable)</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(167)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱699.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Orthopedic Memory Foam Dog Bed')">Add to Cart</button>
+                </div>
+
+                <!-- Product 12 -->
+                <div class="product-card" data-category="Dog Accessories" data-price="259" data-rating="4" onclick="window.location.href='product-detail.html?id=12&title=Adjustable Padded Harness &amp; Leash Set&img=photo/harness.png&price=259&category=Dog Accessories&rating=4&reviews=224'">
+                    <div class="product-image">
+                        <img src="photo/harness.png" alt="harness" style="width: 85px; height: 85px;">
+                    </div>
+                    <div class="product-category">Dog Accessories</div>
+                    <div class="product-title">Adjustable Padded Harness & Leash Set</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-count">(224)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱259.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Adjustable Padded Harness & Leash Set')">Add to Cart</button>
+                </div>
+
+                <!-- Product 13 -->
+                <div class="product-card" data-category="Dog Healthcare" data-price="599" data-rating="5" onclick="window.location.href='product-detail.html?id=13&title=Pet-Tabs Plus Advanced Multivitamin&img=photo/pettabs.png&price=599&category=Dog Healthcare&rating=5&reviews=203'">
+                    <div class="product-image">
+                        <img src="photo/pettabs.png" alt="vitamin" style="width: 85px; height: 85px;">
+                    </div>
+                    <div class="product-category">Dog Healthcare</div>
+                    <div class="product-title">Pet-Tabs Plus Advanced Multivitamin</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(203)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱599.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Pet-Tabs Plus Advanced Multivitamin')">Add to Cart</button>
+                </div>
+
+                <!-- Product 14 -->
+                <div class="product-card" data-category="Dog Healthcare" data-price="750" data-rating="5" onclick="window.location.href='product-detail.html?id=14&title=Anti-Flea &amp; Tick Spot-On Treatment&img=photo/anti.png&price=350&category=Dog Healthcare&rating=5&reviews=176'">
+                    <div class="product-image">
+                        <img src="photo/anti.png" alt="flea treatment" style="width: 85px; height: 85px;">
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="product-category">Dog Healthcare</div>
+                    <div class="product-title">Anti-Flea & Tick Spot-On Treatment</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(176)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱350.00</span>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(event, 'Anti-Flea & Tick Spot-On Treatment')">Add to Cart</button>
+                </div>
+
+                <!-- No results -->
+                <div class="no-results" id="noResults">
+                    <span>🐕</span>
+                    No products found. Try adjusting your filters.
+                </div>
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="paginationBar">
+                <button class="page-btn" onclick="changePage(-1)">← Prev</button>
+                <button class="page-btn active" id="page1" onclick="setPage(1)">1</button>
+                <button class="page-btn" id="page2" onclick="setPage(2)">2</button>
+                <button class="page-btn" id="page3" onclick="setPage(3)">3</button>
+                <button class="page-btn" onclick="changePage(1)">Next →</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Banner -->
+<section class="cta-banner">
+    <div class="container">
+        <h2>🐾 Your Dog Deserves the Best!</h2>
+        <p>Free shipping on orders over ₱2,900. Vet-approved quality you can trust.</p>
+        <a href="index.html" class="btn btn-primary">Back to Home</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>🐾 FurryNeeds</h3>
+                <p style="color: #ecf0f1; line-height: 1.6;">Your trusted partner in pet care. Quality products to keep your pets healthy and happy.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Shop</h3>
+                <ul class="footer-links">
+                    <li><a href="products.html">Dogs</a></li>
+                    <li><a href="cats.html">Cats</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Help</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Track Order</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Account</h3>
+                <ul class="footer-links">
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="login.html">Register</a></li>
+                    <li><a href="account.html">My Account</a></li>
+                    <li><a href="account.html">Order History</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 FurryNeeds. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast">🛒 Added to cart!</div>
+
+<script>
+    let cartCount = 0;
+    let currentFilter = 'all';
+    let currentPage = 1;
+    const itemsPerPage = 8;
+
+    /* ── Add to Cart ── */
+    function addToCart(event, productName, productId) {
+        event.stopPropagation();
+        if (productId) {
+            // DB-connected: use shared addToCart from db.js
+            window.addToCart(productId, 1);
+        } else {
+            // Fallback: show toast only
+            cartCount++;
+            document.getElementById('cartBadge').textContent = cartCount;
+            const toast = document.getElementById('toast');
+            toast.textContent = `🛒 "${productName}" added to cart!`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+    }
+
+    /* ── Top filter bar ── */
+    function setFilter(category, btn) {
+        currentFilter = category;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPage = 1;
+        applyFilters();
+    }
+
+    /* ── Sort ── */
+    function sortProducts(value) {
+        const grid = document.getElementById('productsGrid');
+        const cards = Array.from(grid.querySelectorAll('.product-card[data-category]'));
+        cards.sort((a, b) => {
+            if (value === 'price-low') return +a.dataset.price - +b.dataset.price;
+            if (value === 'price-high') return +b.dataset.price - +a.dataset.price;
+            if (value === 'rating') return +b.dataset.rating - +a.dataset.rating;
+            return 0;
+        });
+        const noRes = document.getElementById('noResults');
+        cards.forEach(c => grid.insertBefore(c, noRes));
+        currentPage = 1;
+        applyFilters();
+    }
+
+    /* ── Main filter logic ── */
+    function applyFilters() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const minPrice = parseFloat(document.getElementById('priceMin').value) || 0;
+        const maxPrice = parseFloat(document.getElementById('priceMax').value) || Infinity;
+
+        // sidebar checkboxes — if none checked, treat as all selected
+        const checkedCats = [];
+        if (document.getElementById('cb-food').checked) checkedCats.push('Dog Food');
+        if (document.getElementById('cb-toys').checked) checkedCats.push('Dog Toys');
+        if (document.getElementById('cb-treats').checked) checkedCats.push('Dog Treats');
+        if (document.getElementById('cb-accessories').checked) checkedCats.push('Dog Accessories');
+        if (document.getElementById('cb-healthcare').checked) checkedCats.push('Dog Healthcare');
+        const anyCatChecked = checkedCats.length > 0;
+
+        const check5 = document.getElementById('cb-5star').checked;
+        const check4 = document.getElementById('cb-4star').checked;
+        const anyRatingChecked = check5 || check4;
+
+        const allCards = document.querySelectorAll('.product-card[data-category]');
+        let visible = [];
+
+        allCards.forEach(card => {
+            const cat = card.dataset.category;
+            const price = +card.dataset.price;
+            const rating = +card.dataset.rating;
+            const title = card.querySelector('.product-title').textContent.toLowerCase();
+
+            const matchFilter = currentFilter === 'all' || cat === currentFilter;
+            const matchSearch = title.includes(search);
+            const matchPrice = price >= minPrice && price <= maxPrice;
+            const matchCat = !anyCatChecked || checkedCats.includes(cat);
+            const matchRating = !anyRatingChecked || (rating === 5 && check5) || (rating === 4 && check4);
+
+            if (matchFilter && matchSearch && matchPrice && matchCat && matchRating) {
+                visible.push(card);
+            }
+        });
+
+        // Pagination
+        const totalPages = Math.max(1, Math.ceil(visible.length / itemsPerPage));
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        allCards.forEach(card => card.style.display = 'none');
+        visible.forEach((card, i) => {
+            card.style.display = (i >= start && i < end) ? 'block' : 'none';
+        });
+
+        document.getElementById('noResults').style.display = visible.length === 0 ? 'block' : 'none';
+        document.getElementById('productsCount').textContent =
+            visible.length === 0
+                ? 'No products found'
+                : `Showing ${Math.min(start + 1, visible.length)}–${Math.min(end, visible.length)} of ${visible.length} products`;
+
+        updatePagination(totalPages);
+    }
+
+    /* ── Pagination ── */
+    function updatePagination(totalPages) {
+        for (let i = 1; i <= 3; i++) {
+            const btn = document.getElementById('page' + i);
+            btn.style.display = i <= totalPages ? 'inline-block' : 'none';
+            btn.classList.toggle('active', i === currentPage);
+        }
+    }
+
+    function setPage(page) {
+        currentPage = page;
+        applyFilters();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function changePage(dir) {
+        const totalPages = Math.max(1, Math.ceil(
+            document.querySelectorAll('.product-card[data-category]').length / itemsPerPage
+        ));
+        currentPage = Math.max(1, Math.min(currentPage + dir, totalPages));
+        applyFilters();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ── Clear filters ── */
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('priceMin').value = '';
+        document.getElementById('priceMax').value = '';
+        ['cb-food','cb-toys','cb-treats','cb-accessories','cb-healthcare','cb-5star','cb-4star']
+            .forEach(id => document.getElementById(id).checked = false);
+        currentFilter = 'all';
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('.filter-btn').classList.add('active');
+        document.querySelector('.sort-select').value = 'default';
+        currentPage = 1;
+        applyFilters();
+    }
+
+    // Init
+    applyFilters();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', refreshCartBadge);
+</script>
+<script src="js/db.js"></script>
+</body>
+</html>

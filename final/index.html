@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FurryNeeds - Premium Pet Care Products & Supplies</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Header */
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .top-bar {
+            background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%);
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .header-main {
+            padding: 20px 0;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #FDCA5D;
+            cursor: pointer;
+        }
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+        }
+        .search-bar input:focus {
+            outline: none;
+            border-color: #FDCA5D;
+        }
+        .header-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+            color: #333;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .icon-btn:hover {
+            color: #FDCA5D;
+            transform: scale(1.1);
+        }
+        .icon-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        nav {
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 15px 0;
+            list-style: none;
+        }
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        .nav-menu a:hover {
+            color: #FDCA5D;
+        }
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 50px;
+        }
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        .hero-text h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero-text p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: white;
+            color: #FDCA5D;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+        .btn-secondary:hover {
+            background: white;
+            color: #FDCA5D;
+        }
+        .hero-image {
+            font-size: 200px;
+            text-align: center;
+        }
+        /* Trust Bar */
+        .trust-bar {
+            background: white;
+            padding: 30px 0;
+            margin-bottom: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .trust-items {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+        .trust-item {
+            text-align: center;
+        }
+        .trust-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        .trust-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .trust-desc {
+            font-size: 14px;
+            color: #666;
+        }
+        /* Section Title */
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .section-subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+        /* Categories */
+        .categories {
+            padding: 50px 0;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(253, 202, 93, 0.3);
+        }
+        .category-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        .category-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        /* Featured Products */
+        .featured-products {
+            padding: 50px 0;
+            background: white;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        .product-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .badge-new {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-sale {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4444;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .product-category {
+            font-size: 12px;
+            color: #FDCA5D;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.3;
+        }
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .stars {
+            color: #ffc107;
+            font-size: 14px;
+        }
+        .rating-count {
+            font-size: 12px;
+            color: #999;
+        }
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .current-price {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+        .old-price {
+            font-size: 16px;
+            color: #999;
+            text-decoration: line-through;
+        }
+        .btn-add-cart {
+            width: 100%;
+            padding: 12px;
+            background: #FDCA5D;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-add-cart:hover {
+            background: #e6b84d;
+        }
+        /* Banner CTA */
+        .cta-banner {
+            background: linear-gradient(135deg, #FDCA5D 0%, #ffdb8d 100%);
+            color: white;
+            padding: 60px 0;
+            margin: 50px 0;
+            text-align: center;
+        }
+        .cta-banner h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        .cta-banner p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 50px 0 20px;
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        .footer-section h3 {
+            margin-bottom: 20px;
+            color: #FDCA5D;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        .footer-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: #FDCA5D;
+        }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            text-align: center;
+            color: #bdc3c7;
+        }
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-text h1 {
+                font-size: 32px;
+            }
+            .trust-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .nav-menu {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="top-bar">
+            Free Shipping on Orders Over ₱2,900 | 30-Day Money Back Guarantee
+        </div>
+        <div class="header-main">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">FurryNeeds</div>
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search for products, brands..." onkeydown="if(event.key==='Enter'){window.location.href='dogs.html?search='+encodeURIComponent(this.value)}">
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn" onclick="window.location.href='cart.html'" title="Shopping Cart">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            <span class="badge">0</span>
+                        </button>
+                        <button class="icon-btn" onclick="window.location.href='account.html'" title="Account">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dogs.html">Dogs</a></li>
+                    <li><a href="cats.html">Cats</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Everything Your Pet Needs, All in One Place</h1>
+                    <p>Premium quality products for dogs and cats. Veterinary approved and delivered to your door.</p>
+                    <div class="hero-buttons">
+                        <a href="dogs.html" class="btn btn-primary">Shop Now</a>
+                        <a href="#categories" class="btn btn-secondary">Browse Categories</a>
+                    </div>
+                </div>
+                <div class="hero-image">🐕🐈</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="trust-bar">
+        <div class="container">
+            <div class="trust-items">
+                <div class="trust-item">
+                    <div class="trust-icon"><img src="photo/pet-van.png" alt="Free Shipping" style="width: 40px; height: 40px;"></div>
+                    <div class="trust-title">Free Shipping</div>
+                    <div class="trust-desc">On orders over ₱2,900</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><img src="photo/return-box.png" alt="30-Day Returns" style="width: 40px; height: 40px;"></div>
+                    <div class="trust-title">30-Day Returns</div>
+                    <div class="trust-desc">Hassle-free returns</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><img src="photo/vet-approved.png" alt="Vet Approved" style="width: 40px; height: 40px;"></div>
+                    <div class="trust-title">Vet Approved</div>
+                    <div class="trust-desc">Quality guaranteed</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><img src="photo/secure-payment.png" alt="Secure Payment" style="width: 40px; height: 40px;"></div>
+                    <div class="trust-title">Secure Payment</div>
+                    <div class="trust-desc">100% safe checkout</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Shop by Category</h2>
+                <p class="section-subtitle">Find exactly what your pet needs</p>
+            </div>
+            <div class="category-grid">
+                <div class="category-card" onclick="window.location.href='products.html'">
+                    <div class="category-icon"><img src="photo/pet-food.png" alt="Pet Food" style="width: 50px; height: 50px;"></div>
+                    <div class="category-name">Food</div>
+                </div>
+                <div class="category-card" onclick="window.location.href='products.html'">
+                    <div class="category-icon"><img src="photo/pet-toy.png" alt="Pet Toys" style="width: 65px; height: 65px;"></div>
+                    <div class="category-name">Toys</div>
+                </div>
+                <div class="category-card" onclick="window.location.href='products.html'">
+                    <div class="category-icon"><img src="photo/pet-accessories.png" alt="Pet Accessories" style="width: 65px; height: 65px;"></div>
+                    <div class="category-name">Accessories</div>
+                </div>
+                <div class="category-card" onclick="window.location.href='products.html'">
+                    <div class="category-icon"><img src="photo/pet-healthcare.png" alt="Pet Healthcare" style="width: 65px; height: 65px;"></div>
+                    <div class="category-name">Healthcare</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <!-- Featured Products -->
+    <section class="featured-products">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Featured Products</h2>
+                <p class="section-subtitle">Handpicked bestsellers for your furry friends</p>
+            </div>
+            <div class="products-grid">
+                <!-- Product 1 -->
+                <div class="product-card" onclick="window.location.href='product-detail.html';">
+                    <div class="product-image">
+                        <img src="photo/organic.jpg" alt="meat" style="width: 85px; height: 85px;"> 
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="product-category">Dog Food</div>
+                    <div class="product-title">Premium Grain-Free Adult Dog Food 15lb</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(248)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱499.00</span>
+                    </div>
+                    <button class="btn-add-cart" data-product-id="1" onclick="addToCart(1)">Add to Cart</button>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card" onclick="window.location.href='product-detail.html';">
+                    <div class="product-image">
+                        <img src="photo/duck.png" alt="Dog Toy" style="width: 85px; height: 85px;">
+                    </div>
+                    <div class="product-category">Dog Toys</div>
+                    <div class="product-title">Interactive Squeaky Dog Toy (Duck) </div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-count">(187)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱120.00</span>
+                        <span class="old-price">₱200.00</span>
+                    </div>
+                    <button class="btn-add-cart" data-product-id="2" onclick="addToCart(2)">Add to Cart</button>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card" onclick="window.location.href='product-detail.html';">
+                    <div class="product-image">
+                        <img src="photo/dental.png" alt="Dog Treats" style="width: 85px; height: 85px;">
+                    </div>
+                    <div class="product-category">Dog Treats</div>
+                    <div class="product-title">Natural Dental Chew Sticks (30-Count)</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(312)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱199.00</span>
+                    </div>
+                    <button class="btn-add-cart" data-product-id="3" onclick="addToCart(3)">Add to Cart</button>
+                </div>
+
+                <!-- Product 4 -->
+               <div class="product-card" onclick="window.location.href='product-detail.html';">
+                    <div class="product-image">
+                        <img src="photo/pettabs.png" alt="Dog Vitamins" style="width: 90px; height: 90px;">
+                    </div>
+                    <div class="product-category">Dog Healthcare</div>
+                    <div class="product-title">Pet-Tabs Plus Advanced Multivitamin</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count">(203)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₱599.00</span>
+                    </div>
+                    <button class="btn-add-cart" data-product-id="4" onclick="addToCart(4)">Add to Cart</button> 
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🐾 FurryNeeds</h3>
+                    <p style="color: #ecf0f1; line-height: 1.6;">Your trusted partner in pet care. We offer quality products and medicine to keep your pets healthy.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Shop</h3>
+                    <ul class="footer-links">
+                        <li><a href="products.html">Dogs</a></li>
+                        <li><a href="products.html">Cats</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Help</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">Returns</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Account</h3>
+                    <ul class="footer-links">
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="login.html">Register</a></li>
+                        <li><a href="account.html">My Account</a></li>
+                        <li><a href="account.html">Order History</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FurryNeeds. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+<script src="js/db.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    refreshCartBadge();
+    updateHeaderAuth();
+});
+</script>
+</body>
+</html>
